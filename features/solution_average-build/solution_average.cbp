@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+   <FileVersion major="1" minor="6" />
+   <Project>
+      <Option title="solution_average" />
+      <Option makefile_is_custom="1" />
+      <Option compiler="gcc" />
+      <Option virtualFolders="CMake Files\;" />
+      <Build>
+      <Target title="all">
+         <Option working_dir="/home/jelle/school/beeldverwerking/project/features/solution_average-build" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 all" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="edit_cache">
+         <Option working_dir="/home/jelle/school/beeldverwerking/project/features/solution_average-build" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 edit_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="rebuild_cache">
+         <Option working_dir="/home/jelle/school/beeldverwerking/project/features/solution_average-build" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 rebuild_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="solution_average">
+         <Option output="/home/jelle/school/beeldverwerking/project/features/solution_average/bin/solution_average" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/jelle/school/beeldverwerking/project/features/solution_average/bin" />
+         <Option object_output="./" />
+         <Option type="1" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/home/jelle/school/beeldverwerking/project/features/solution_average/src" />
+            <Add directory="/usr/include" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2/backward" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2/x86_64-unknown-linux-gnu" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/include" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/include-fixed" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 solution_average" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="solution_average/fast">
+         <Option output="/home/jelle/school/beeldverwerking/project/features/solution_average/bin/solution_average" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/jelle/school/beeldverwerking/project/features/solution_average/bin" />
+         <Option object_output="./" />
+         <Option type="1" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/home/jelle/school/beeldverwerking/project/features/solution_average/src" />
+            <Add directory="/usr/include" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2/backward" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2/x86_64-unknown-linux-gnu" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/include" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/include-fixed" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 solution_average/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/solution_average-build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      </Build>
+      <Unit filename="/home/jelle/school/beeldverwerking/project/features/solution_average/src/main.cpp">
+      </Unit>
+      <Unit filename="/home/jelle/school/beeldverwerking/project/features/solution_average/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\" />
+      </Unit>
+   </Project>
+</CodeBlocks_project_file>

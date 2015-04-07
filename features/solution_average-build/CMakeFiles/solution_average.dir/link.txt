@@ -1,0 +1,1 @@
+/usr/bin/c++   -o3 -w -g -pg  CMakeFiles/solution_average.dir/src/main.cpp.o  -o /home/jelle/school/beeldverwerking/project/features/solution_average/bin/solution_average  -L/usr/local/lib -rdynamic -lopencv_core -lopencv_highgui -lopencv_imgcodecs -lopencv_imgproc -Wl,-rpath,/usr/local/lib 
