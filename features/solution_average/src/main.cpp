@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 {
     cout<<argv[0]<<": "<<argc-2<<" images to process"<<endl;
     if (argc <3) {
-        cout<<"args: outputfilename  inputfiles";
+        cout<<"args: outputfilename  inputfiles\n";
         return 255;
     }
     Mat outputImage;
@@ -28,7 +28,8 @@ int main(int argc, char** argv)
             }
         }
     }else {
-        cout<<"error in outputfile";
+        cout<<"error in outputfile\n";
+        return 253;
     }
     ofstream outfilestream(argv[1]);
     if(!outfilestream) {
@@ -50,7 +51,10 @@ int main(int argc, char** argv)
     Mat channels[3];
     normalize(outputImage, outputImage, 0,1, NORM_MINMAX);
     split(outputImage, channels);
+    channels[0]*=(256*256);
+    channels[0].convertTo(channels[0], CV_16U);
     imshow("result", channels[0]);
+    imwrite(argv[1], channels[0]);
 
     waitKey(0);
 }

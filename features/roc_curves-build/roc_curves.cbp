@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+   <FileVersion major="1" minor="6" />
+   <Project>
+      <Option title="roc_curves" />
+      <Option makefile_is_custom="1" />
+      <Option compiler="gcc" />
+      <Option virtualFolders="CMake Files\;" />
+      <Build>
+      <Target title="all">
+         <Option working_dir="/home/jelle/school/beeldverwerking/project/features/roc_curves-build" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 all" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="roc_curves">
+         <Option output="/home/jelle/school/beeldverwerking/project/features/roc_curves/bin/roc_curves" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/jelle/school/beeldverwerking/project/features/roc_curves/bin" />
+         <Option object_output="./" />
+         <Option type="1" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/home/jelle/school/beeldverwerking/project/features/roc_curves/src" />
+            <Add directory="/usr/include" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2/backward" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2/x86_64-unknown-linux-gnu" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/include" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/include-fixed" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 roc_curves" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="roc_curves/fast">
+         <Option output="/home/jelle/school/beeldverwerking/project/features/roc_curves/bin/roc_curves" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/jelle/school/beeldverwerking/project/features/roc_curves/bin" />
+         <Option object_output="./" />
+         <Option type="1" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/home/jelle/school/beeldverwerking/project/features/roc_curves/src" />
+            <Add directory="/usr/include" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2/backward" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/../../../../include/c++/4.9.2/x86_64-unknown-linux-gnu" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/include" />
+            <Add directory="/usr/lib/gcc/x86_64-unknown-linux-gnu/4.9.2/include-fixed" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 roc_curves/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="edit_cache">
+         <Option working_dir="/home/jelle/school/beeldverwerking/project/features/roc_curves-build" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 edit_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="rebuild_cache">
+         <Option working_dir="/home/jelle/school/beeldverwerking/project/features/roc_curves-build" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 rebuild_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/home/jelle/school/beeldverwerking/project/features/roc_curves-build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      </Build>
+      <Unit filename="/home/jelle/school/beeldverwerking/project/features/roc_curves/src/dummyFeature.cpp">
+      </Unit>
+      <Unit filename="/home/jelle/school/beeldverwerking/project/features/roc_curves/src/main.cpp">
+      </Unit>
+      <Unit filename="/home/jelle/school/beeldverwerking/project/features/roc_curves/src/roc_analizer.cpp">
+      </Unit>
+      <Unit filename="/home/jelle/school/beeldverwerking/project/features/roc_curves/src/headers/Ifeature.h">
+      </Unit>
+      <Unit filename="/home/jelle/school/beeldverwerking/project/features/roc_curves/src/headers/dummyFeature.h">
+      </Unit>
+      <Unit filename="/home/jelle/school/beeldverwerking/project/features/roc_curves/src/headers/graphview.h">
+      </Unit>
+      <Unit filename="/home/jelle/school/beeldverwerking/project/features/roc_curves/src/headers/roc_analizer.h">
+      </Unit>
+      <Unit filename="/home/jelle/school/beeldverwerking/project/features/roc_curves/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\" />
+      </Unit>
+   </Project>
+</CodeBlocks_project_file>
