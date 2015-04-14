@@ -13,20 +13,21 @@ using namespace cv;
 
 class graphview {
 public:
-    static void createGraph(Mat &outputImage, const std::vector<std::pair<double, double> > &datapoints, const char* name_x_axis, const char* name_y_axis);
+    static void createGraph(Mat &outputImage, const std::vector<std::pair<double, double> > &datapoints);
 private:
 
 };
 
-void graphview::createGraph(Mat &outputImage, const std::vector<std::pair<double, double> > &datapoints, const char *name_x_axis, const char *name_y_axis) {
-    Point startPoint(0,0);
+void graphview::createGraph(Mat &outputImage, const std::vector<std::pair<double, double> > &datapoints) {
+    Point startPoint(outputImage.rows- datapoints[1].first*outputImage.rows,datapoints[1].second*outputImage.cols);
     Point nextPoint;
     for (int i=0; i<datapoints.size(); i++) {
-        nextPoint=Point(datapoints[i].first*outputImage.cols,outputImage.rows- datapoints[i].second*outputImage.rows);
-        line(outputImage, startPoint, nextPoint, Scalar(125,125,125));
+        nextPoint=Point(outputImage.rows- datapoints[i].first*outputImage.rows,datapoints[i].second*outputImage.cols);
+        line(outputImage, startPoint, nextPoint, Scalar(256,125,125));
         startPoint=nextPoint;
-        circle(outputImage, startPoint,2, Scalar(125,125,125), -1);
+        circle(outputImage, startPoint,3, Scalar(125,256,125), -1);
     }
+    line(outputImage, Point(outputImage.rows,0), Point(0,outputImage.cols), Scalar(100,100,100));
 }
 
 

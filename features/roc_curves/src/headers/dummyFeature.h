@@ -5,6 +5,7 @@
 #include "opencv2/opencv.hpp"
 #include "opencv2/core.hpp"
 #include "opencv2/highgui.hpp"
+#include "opencv2/imgproc.hpp"
 #include "headers/Ifeature.h"
 
 
@@ -12,19 +13,21 @@ using namespace cv;
 
 class dummyFeature: public Ifeature {
 public:
+    dummyFeature(const char* path) {
+        image=imread(path);
+        image.convertTo(image, CV_32FC3);
+        Mat channels[3];
+        split(image, channels);
+        image=channels[0];
+        normalize(image, image, 0,1, NORM_MINMAX);
+    }
+
     virtual void applyFeature(const Mat &inputImage, Mat &outputImage, float  param) {
-       if(param <=0.1) { //pass inputImage to outputImage
-            outputImage=inputImage;
-        }
-        else if(param ==05) {//return negative image
-            outputImage=Mat::zeros(inputImage.size(), CV_32FC1); //32 floating, 1 channel
-        }
-        else  {//return positive image
-            outputImage=Mat::ones(inputImage.size(), CV_32FC1);
-        }
+        threshold(image,outputImage, param, 1.0, THRESH_BINARY);
     }
 
 private:
+    Mat image;
 };
 
 

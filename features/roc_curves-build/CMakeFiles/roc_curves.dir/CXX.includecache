@@ -27,6 +27,8 @@ opencv2/core.hpp
 /home/jelle/school/beeldverwerking/project/features/roc_curves/src/headers/opencv2/core.hpp
 opencv2/highgui.hpp
 /home/jelle/school/beeldverwerking/project/features/roc_curves/src/headers/opencv2/highgui.hpp
+opencv2/imgproc.hpp
+/home/jelle/school/beeldverwerking/project/features/roc_curves/src/headers/opencv2/imgproc.hpp
 headers/Ifeature.h
 /home/jelle/school/beeldverwerking/project/features/roc_curves/src/headers/headers/Ifeature.h
 
@@ -53,6 +55,10 @@ opencv2/highgui.hpp
 /home/jelle/school/beeldverwerking/project/features/roc_curves/src/headers/opencv2/highgui.hpp
 headers/Ifeature.h
 /home/jelle/school/beeldverwerking/project/features/roc_curves/src/headers/headers/Ifeature.h
+vector
+-
+headers/graphview.h
+/home/jelle/school/beeldverwerking/project/features/roc_curves/src/headers/headers/graphview.h
 
 /home/jelle/school/beeldverwerking/project/features/roc_curves/src/main.cpp
 iostream

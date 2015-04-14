@@ -11,27 +11,22 @@ int main(int argc, char** argv)
 {
 
 
-        /*if (argc <2) {
+        if (argc <2) {
             cout<<"args: inputimage  truthimage";
             return 255;
-        }*/
+        }
         Mat truthImage;
         Mat inputImage;
 
         inputImage=imread(argv[1]);
         truthImage=imread(argv[2]);
-    dummyFeature feature;
+    dummyFeature feature(argv[3]);
     Roc_analizer analizer(feature);
-
-   // analizer.analize(inputImage, truthImage);
-    Mat testImage=Mat::zeros(256, 256, CV_8U);
-    vector<pair<double, double> > testvalues;
-    for (int i=0; i<10; i++) {
-        testvalues.push_back(make_pair(i/10.0, i*0.1));
-    }
-    graphview::createGraph(testImage, testvalues, "test", "test");
-    namedWindow("test");
-    imshow("test", testImage);
+    Mat outputImage;
+    //feature.applyFeature(inputImage, outputImage, 0.5);
+    analizer.analize(inputImage, truthImage);
+    int wait;
+    cin>>wait;
     waitKey(0);
 
     return 0;
