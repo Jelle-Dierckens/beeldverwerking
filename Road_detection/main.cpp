@@ -1,21 +1,26 @@
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/utility.hpp>
+#include "opencv2/imgproc.hpp"
+#include "opencv2/imgcodecs.hpp"
+#include "opencv2/highgui.hpp"
+#include "watershedwrapper.h"
+
 #include <iostream>
+#include <ctype.h>
 
 using namespace cv;
 using namespace std;
 
-int main( int argc, char** argv )
+
+int main( int argc, const char** argv )
 {
     if( argc != 2)
     {
         cout <<" Usage: display_image ImageToLoadAndDisplay" << endl;
-        return -1;
+        argv[1] = "um_000000.png";
     }
-
-    Mat image;
-    image = imread(argv[1]);   // Read the file
+    Mat image = imread(argv[1]);   // Read the file
+    Mat markerMask = imread("um_000000__edit.png");   // Read the file
+    cv::cvtColor(markerMask, markerMask, COLOR_RGB2GRAY);
 
     if(! image.data )                              // Check for invalid input
     {
@@ -23,66 +28,19 @@ int main( int argc, char** argv )
         return -1;
     }
 
-    namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
-    imshow( "Display window", image );                   // Show our image inside it.
+    imshow("Display window",image);
+    imshow("imageEdit",markerMask);
 
-    namedWindow("Control", WINDOW_AUTOSIZE); //create a window called "Control"
-
-    int iLowH = 53;
-    int iHighH = 179;
-
-    int iLowS = 0;
-    int iHighS = 28;
-
-    int iLowV = 87;
-    int iHighV = 171;
-
-    //Create trackbars in "Control" window
-    createTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
-    createTrackbar("HighH", "Control", &iHighH, 179);
-
-    createTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
-    createTrackbar("HighS", "Control", &iHighS, 255);
-
-    createTrackbar("LowV", "Control", &iLowV, 255); //Value (0 - 255)
-    createTrackbar("HighV", "Control", &iHighV, 255);
+    WatershedWrapper water(true);
+    Mat output = water.runWatershed(image,markerMask);
 
     while(true){
-
-        Mat imgHSV;
-
-        cvtColor(image, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
-
-        Mat imgThresholded;
-
-        inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV), imgThresholded); //Threshold the image
-
-
-
-        //morphological closing (fill small holes in the foreground)
-        dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_RECT, Size(5, 5)) );
-        erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_RECT, Size(5, 5)) );
-
-        //morphological opening (remove small objects from the foreground)
-        erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_RECT, Size(5, 5)) );
-        dilate( imgThresholded, imgThresholded, getStructuringElement(MORPH_RECT, Size(5, 5)) );
-
-        imshow("Thresholded Image", imgThresholded); //show the thresholded image
-
-
-        Mat canny_output;
-        Canny( imgThresholded, canny_output, 100, 100*2, 3 );
-        imshow("Output", canny_output);
-
-
-
-        if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+        char key = (char)waitKey(30);
+        if (key == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
         {
             cout << "esc key is pressed by user" << endl;
             break;
         }
     }
-
     return 0;
 }
-

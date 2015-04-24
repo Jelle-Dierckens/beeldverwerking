@@ -3,7 +3,8 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    watershedwrapper.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
@@ -28,6 +29,8 @@ LIBS += -L/usr/local/lib \
     -lopencv_video \
     -lopencv_videoio \
     -lopencv_videostab \
-    -L/usr/local/lib/x86_64-linux-gnu \
-    -lglut
+
+
+HEADERS += \
+    watershedwrapper.h
 
