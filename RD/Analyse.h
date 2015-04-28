@@ -2,21 +2,22 @@
 #define ANALYSE
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <cv.h>
+//#include <cv.h>							// Frederick
+#include <opencv\cv.h>						// Jens
 #include "linehandler.h"
 using namespace std;
-using namespace cv;
+//using namespace cv;	
 class Analyse{
 public:
-	void readallpics(String directory);
-	void processimage(Mat& image);
-	Mat findEdgeLines(Mat image);
-	void findEdges(Mat& image);
-	void findRoadMarkings(Mat& image);
-	Mat findLines(Mat contours,Mat image);
-	Mat noiseFilter(Mat image,int noise);
-	void findVerticalLines(Mat& image);
-	void printResult(Mat & image);
+	void readallpics(cv::String directory);
+	void processimage(cv::Mat& image);
+	cv::Mat findEdgeLines(cv::Mat image);
+	void findEdges(cv::Mat& image);
+	void findRoadMarkings(cv::Mat& image);
+	cv::Mat findLines(cv::Mat contours, cv::Mat image);
+	cv::Mat noiseFilter(cv::Mat image, int noise);
+	void findVerticalLines(cv::Mat& image);
+	void printResult(cv::Mat & image);
 private:
 	LineHandler lh;
 	

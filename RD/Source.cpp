@@ -1,6 +1,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <cv.h>
+//#include <cv.h>							// Frederick
+#include <opencv\cv.h>						// Jens
 #include <iostream>
 #include "linefinder.h"
 #include "Analyse.h"
@@ -23,7 +24,11 @@ int main(int argc, char** argv)
 	Analyse analyse;
 	//String directory = "C:\\Users\\Frederick\\Documents\\Visual Studio 2013\\Projects\\RoadDetection\\data_road\\results";
 	
-	String directory = "C:\\Users\\Frederick\\Documents\\Visual Studio 2013\\Projects\\RoadDetection\\data_road\\data_road\\training\\image_2\\";
+	// directory Frederick:
+	//cv::String directory = "C:\\Users\\Frederick\\Documents\\Visual Studio 2013\\Projects\\RoadDetection\\data_road\\data_road\\training\\image_2\\";
+	//directory Jens:
+	cv::String directory = "C:\\Beeldverwerking\\data_road\\training\\image_2\\";
+
 	analyse.readallpics(directory);
 
 	return 0;

@@ -1,7 +1,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <cv.h>
+//#include <cv.h>							// Frederick
+#include <opencv\cv.h>						// Jens
 #include <iostream>
 #include "linefinder.h"
 #include "linehandler.h"
@@ -15,7 +16,7 @@ using namespace std;
 /*
 leest alle foto's
 */
-void Analyse::readallpics(String directory){
+void Analyse::readallpics(cv::String directory){
 	DIR *dir;
 	struct dirent *ent;
 
@@ -120,16 +121,18 @@ void tryFilter(Mat & image){
 	Mat imgHSV;
 	Mat imgThresholded;
 
-	namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
+	namedWindow("Control", /*CV_*/WINDOW_AUTOSIZE); //create a window called "Control"
 	//Create trackbars in "Control" window
-	cvCreateTrackbar("LowH", "Control", &iLowH, 255); //Hue (0 - 179)
-	cvCreateTrackbar("HighH", "Control", &iHighH, 255);
 
-	cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
-	cvCreateTrackbar("HighS", "Control", &iHighS, 255);
+	// cvCreateTrackbar is bij mij createTrackbar :s
+	createTrackbar("LowH", "Control", &iLowH, 255); //Hue (0 - 179)
+	createTrackbar("HighH", "Control", &iHighH, 255);
 
-	cvCreateTrackbar("LowV", "Control", &iLowV, 255); //Value (0 - 255)
-	cvCreateTrackbar("HighV", "Control", &iHighV, 255);
+	createTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
+	createTrackbar("HighS", "Control", &iHighS, 255);
+
+	createTrackbar("LowV", "Control", &iLowV, 255); //Value (0 - 255)
+	createTrackbar("HighV", "Control", &iHighV, 255);
 	while (true){
 		cvtColor(image, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
 
@@ -326,7 +329,7 @@ void findShapes(Mat& src){
 	// Find contours
 	std::vector<std::vector<cv::Point> > contours;
 	cv::findContours(bw.clone(), contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-	cout << "coountours size " << contours.size() << endl;
+	cout << "contours size " << contours.size() << endl;
 	vector<Point> approx;
 	vector<vector<Point> > squares;
 	for (size_t i = 0; i < contours.size(); i++)
@@ -480,7 +483,8 @@ void Analyse::findVerticalLines(Mat& image){
 
 void Analyse::printResult(Mat & image){
 	const int N = 3;
-	lh.drawNBestLines(image, N);
+	//lh.drawNBestLines(image, N);
+	lh.fillBestLines(image);
 	imshow("Result", image);
 }
 
