@@ -10,18 +10,18 @@ LINK_DIRECTORIES(/usr/local/lib)
 LINK_DIRECTORIES(/usr/lib)
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
-SET(CMAKE_CXX_FLAGS "-o3 -w")
+SET(CMAKE_CXX_FLAGS "-o3 -w -std=c++11")
 SET(CMAKE_CXX_LINK_FLAGS "-pg")
 SET(OpenCV_LIBRARIES opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc)
 
 #ADD_EXECUTABLE(hls src/hls.cpp)
 #TARGET_LINK_LIBRARIES(hls ${OpenCV_LIBRARIES})
 
-#ADD_EXECUTABLE(clustering src/clustering.cpp)
-#TARGET_LINK_LIBRARIES(clustering ${OpenCV_LIBRARIES})
+#ADD_EXECUTABLE(Bayes src/Bayes.cpp)
+#TARGET_LINK_LIBRARIES(Bayes ${OpenCV_LIBRARIES})
 
-ADD_EXECUTABLE(3dblur src/3dblur.cpp)
-TARGET_LINK_LIBRARIES(3dblur ${OpenCV_LIBRARIES})
+ADD_EXECUTABLE(main src/test.cpp)
+TARGET_LINK_LIBRARIES(main ${OpenCV_LIBRARIES})
 
 
 SET(CMAKE_BUILD_TYPE Release)

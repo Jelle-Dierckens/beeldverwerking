@@ -53,38 +53,38 @@ CMAKE_SOURCE_DIR = /home/jelle/school/beeldverwerking/project/features/hls_spect
 CMAKE_BINARY_DIR = /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template-build
 
 #=============================================================================
-# Target rules for target CMakeFiles/3dblur.dir
+# Target rules for target CMakeFiles/main.dir
 
 # All Build rule for target.
-CMakeFiles/3dblur.dir/all:
-	$(MAKE) -f CMakeFiles/3dblur.dir/build.make CMakeFiles/3dblur.dir/depend
-	$(MAKE) -f CMakeFiles/3dblur.dir/build.make CMakeFiles/3dblur.dir/build
+CMakeFiles/main.dir/all:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template-build/CMakeFiles  1
-	@echo "Built target 3dblur"
-.PHONY : CMakeFiles/3dblur.dir/all
+	@echo "Built target main"
+.PHONY : CMakeFiles/main.dir/all
 
 # Include target in all.
-all: CMakeFiles/3dblur.dir/all
+all: CMakeFiles/main.dir/all
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/3dblur.dir/rule: cmake_check_build_system
+CMakeFiles/main.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template-build/CMakeFiles 1
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/3dblur.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/main.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template-build/CMakeFiles 0
-.PHONY : CMakeFiles/3dblur.dir/rule
+.PHONY : CMakeFiles/main.dir/rule
 
 # Convenience name for target.
-3dblur: CMakeFiles/3dblur.dir/rule
-.PHONY : 3dblur
+main: CMakeFiles/main.dir/rule
+.PHONY : main
 
 # clean rule for target.
-CMakeFiles/3dblur.dir/clean:
-	$(MAKE) -f CMakeFiles/3dblur.dir/build.make CMakeFiles/3dblur.dir/clean
-.PHONY : CMakeFiles/3dblur.dir/clean
+CMakeFiles/main.dir/clean:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/clean
+.PHONY : CMakeFiles/main.dir/clean
 
 # clean rule for target.
-clean: CMakeFiles/3dblur.dir/clean
+clean: CMakeFiles/main.dir/clean
 .PHONY : clean
 
 #=============================================================================

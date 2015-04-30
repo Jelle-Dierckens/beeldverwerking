@@ -1,0 +1,1 @@
+/usr/bin/c++   -o3 -w -std=c++11 -O3 -DNDEBUG -pg  CMakeFiles/test.dir/src/test.o  -o /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/bin/test  -L/usr/local/lib -rdynamic -lopencv_core -lopencv_highgui -lopencv_imgcodecs -lopencv_imgproc -Wl,-rpath,/usr/local/lib 

@@ -102,32 +102,32 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named 3dblur
+# Target rules for targets named main
 
 # Build rule for target.
-3dblur: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 3dblur
-.PHONY : 3dblur
+main: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 main
+.PHONY : main
 
 # fast build rule for target.
-3dblur/fast:
-	$(MAKE) -f CMakeFiles/3dblur.dir/build.make CMakeFiles/3dblur.dir/build
-.PHONY : 3dblur/fast
+main/fast:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
+.PHONY : main/fast
 
 # target to build an object file
-src/3dblur.o:
-	$(MAKE) -f CMakeFiles/3dblur.dir/build.make CMakeFiles/3dblur.dir/src/3dblur.o
-.PHONY : src/3dblur.o
+src/test.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/test.o
+.PHONY : src/test.o
 
 # target to preprocess a source file
-src/3dblur.i:
-	$(MAKE) -f CMakeFiles/3dblur.dir/build.make CMakeFiles/3dblur.dir/src/3dblur.i
-.PHONY : src/3dblur.i
+src/test.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/test.i
+.PHONY : src/test.i
 
 # target to generate assembly for a file
-src/3dblur.s:
-	$(MAKE) -f CMakeFiles/3dblur.dir/build.make CMakeFiles/3dblur.dir/src/3dblur.s
-.PHONY : src/3dblur.s
+src/test.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/test.s
+.PHONY : src/test.s
 
 # Help Target
 help:
@@ -137,10 +137,10 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... 3dblur"
-	@echo "... src/3dblur.o"
-	@echo "... src/3dblur.i"
-	@echo "... src/3dblur.s"
+	@echo "... main"
+	@echo "... src/test.o"
+	@echo "... src/test.i"
+	@echo "... src/test.s"
 .PHONY : help
 
 
