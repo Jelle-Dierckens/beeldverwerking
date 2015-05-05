@@ -8,6 +8,8 @@
 #include "linehandler.h"
 #include "Analyse.h"
 #include "dirent.h"
+#include "chrono.h"
+#include <math.h>
 #include <vector>
 
 using namespace cv;
@@ -27,13 +29,15 @@ void Analyse::readallpics(cv::String directory){
 		while ((ent = readdir(dir)) != NULL) {
 			String name = ent->d_name;
 			if (name.find(".png") < name.length()){
-				printf("%s\n", ent->d_name);
-				String filename = directory + ent->d_name;
-				//cout << filename << endl;
-				Mat image = imread(filename, IMREAD_COLOR); // Read the file
-				Analyse analyse;
-				analyse.processimage(image);
-			}
+				if (name != "uu_000067.png"){
+					printf("%s\n", ent->d_name);
+					String filename = directory + ent->d_name;
+					//cout << filename << endl;
+					Mat image = imread(filename, IMREAD_COLOR); // Read the file
+					Analyse analyse;
+					analyse.processimage(image, name);
+				}
+            }
 		}
 		closedir(dir);
 	}
@@ -482,34 +486,391 @@ void Analyse::findVerticalLines(Mat& image){
 
 
 void Analyse::printResult(Mat & image){
-	const int N = 3;
-	//lh.drawNBestLines(image, N);
-	lh.fillBestLines(image);
-	imshow("Result", image);
+	const int N = 2;
+	Mat cpy;
+	image.copyTo(cpy);
+	//lh.drawNBestLines(cpy, N);
+	lh.fillBestLines(cpy);
+	imshow("Result", cpy);
+
+	waitKey(0);
+
 }
 
+Mat Analyse::watershedImage(Mat & image, vector<Line>& lines){
+
+	//initialize
+	Mat markerMask, img0;
+	Mat imgGray;
 
 
+	image.copyTo(img0);
+	cvtColor(image, markerMask, COLOR_BGR2GRAY);
+	cvtColor(markerMask, imgGray, COLOR_GRAY2BGR);
+	markerMask = Scalar::all(0);
+	//imshow("image", image);
+
+	//add markers
+	
+	//vector<Line> lines =lh.findNBestLines(2);
+	if (lines.size() == 2){
+		double x = (lines[0].b() - lines[1].b()) / (lines[1].a() - lines[0].a());
+		double y = (lines[0].a() * x) + lines[0].b();
+
+		//cout << lines[0].pt1 <<" "<< lines[0].pt2 << endl;
+		//cout << lines[1].pt1 << " " << lines[1].pt2 << endl;
+		//cout << x << "," << y << endl;
+		//cout << markerMask.rows << "," << markerMask.cols << endl;
+
+	
+
+
+
+
+		//x -= 20;
+		/*circle(markerMask, Point(x, y), y-10, Scalar(255), 1);
+		line(markerMask, Point(x, y), lines[0].pt2, Scalar(255), 1, 8, 0);*/
+		//line(markerMask, Point(x, y), lines[1].pt2, Scalar(255), 1, 8, 0);
+		int dikte = 20;
+		int inshift = 40;
+
+		vector<Point> points;
+		points.push_back(Point(x, y+2));
+		if (lines[0].pt2.x < lines[1].pt2.x){
+			line(markerMask, Point(x - dikte, y), Point(lines[0].pt2.x - dikte, lines[0].pt2.y), Scalar(255), 1, 8, 0);
+			line(markerMask, Point(x + dikte, y), Point(lines[1].pt2.x + dikte, lines[1].pt2.y), Scalar(255), 1, 8, 0);
+			points.push_back(Point(lines[0].pt2.x + inshift, lines[0].pt2.y));
+			points.push_back(Point(lines[1].pt2.x - inshift, lines[1].pt2.y));
+		}
+		else{
+			line(markerMask, Point(x + dikte, y), Point(lines[0].pt2.x + dikte, lines[0].pt2.y), Scalar(255), 1, 8, 0);
+			line(markerMask, Point(x - dikte, y), Point(lines[1].pt2.x - dikte, lines[1].pt2.y), Scalar(255), 1, 8, 0);
+			points.push_back(Point(lines[0].pt2.x - inshift, lines[0].pt2.y));
+			points.push_back(Point(lines[1].pt2.x + inshift, lines[1].pt2.y));
+		}
+		line(markerMask, Point(x - dikte, y), Point(x + dikte, y), Scalar(255), 1, 8, 0);
+
+		fillConvexPoly(markerMask, points, Scalar(255));
+
+		
+		
+		//imshow("markerMask", markerMask);
+
+
+		//watershed
+
+		int i, j, compCount = 0;
+		vector<vector<Point> > contours;
+		vector<Vec4i> hierarchy;
+
+		findContours(markerMask, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
+
+
+		Mat markers(markerMask.size(), CV_32S);
+		markers = Scalar::all(0);
+		int idx = 0;
+		for (; idx >= 0; idx = hierarchy[idx][0], compCount++)
+			drawContours(markers, contours, idx, Scalar::all(compCount + 1), -1, 8, hierarchy, INT_MAX);
+
+
+		vector<Vec3b> colorTab;
+		colorTab.push_back(Vec3b(255, 0, 0));
+		colorTab.push_back(Vec3b(0, 255, 0));
+		for (i = 2; i < compCount; i++)
+		{
+			int b = theRNG().uniform(0, 255);
+			int g = theRNG().uniform(0, 255);
+			int r = theRNG().uniform(0, 255);
+
+			colorTab.push_back(Vec3b((uchar)b, (uchar)g, (uchar)r));
+		}
+
+		//double t = (double)getTickCount();
+		//imshow("markers", markers);
+		watershed(image, markers);
+		//t = (double)getTickCount() - t;
+		//printf("execution time = %gms\n", t*1000. / getTickFrequency());
+
+		Mat wshed(markers.size(), CV_8UC3);
+
+		// paint the watershed image
+		for (i = 0; i < markers.rows; i++)
+			for (j = 0; j < markers.cols; j++)
+			{
+			int index = markers.at<int>(i, j);
+			if (index == -1)
+				wshed.at<Vec3b>(i, j) = Vec3b(255, 255, 255);
+			else if (index <= 0 || index > compCount)
+				wshed.at<Vec3b>(i, j) = Vec3b(0, 0, 0);
+			else
+				wshed.at<Vec3b>(i, j) = colorTab[index - 1];
+			}
+
+		wshed = wshed*0.5 + imgGray*0.5;
+		//imshow("watershed transform", wshed);
+		return wshed;
+	}
+	
+
+}
+
+vector<Line> Analyse::waterFilter(Mat & image){
+	//initialize
+	Mat markerMask;
+	Mat imgGray;
+	double ldegree = 30;
+	double rdegree = 30;
+	Mat output(image.size(), CV_8UC1);
+	std::vector<Vec2f> lines;
+
+
+	int lanewidth=image.cols;
+	Point picmid(image.cols / 2, 0);
+	Point mid(image.cols / 2, 0);
+	double lradian = -ldegree *(PI / 180);
+	double rradian = -rdegree *(PI / 180);
+	double la = tan(lradian);
+	double ra = tan(rradian);
+	double lb = mid.y - (mid.x*la);
+	double rb = mid.y - (mid.x*ra);
+
+	Point p0(0, (double)-la*mid.x + lb);
+	Point p1(image.cols, (double)-ra*mid.x + rb);
+
+	//circle(image, Point(mid.x, image.rows), 5, Scalar(255), 5);
+
+
+	int opp;
+	for(int g =0 ; g<2;g++){
+		Mat rescont(image.size(), CV_8UC3);
+		cvtColor(image, markerMask, COLOR_BGR2GRAY);
+		cvtColor(markerMask, imgGray, COLOR_GRAY2BGR);
+		markerMask = Scalar::all(0);
+
+
+		line(markerMask, mid, p0, Scalar(255), 3);
+		line(markerMask, mid, p1, Scalar(255), 3);
+
+		circle(markerMask, Point(mid.x, image.rows),75, Scalar(255), 5);
+		line(markerMask, Point(mid.x,300), Point(mid.x,180), Scalar(255), 5);
+		//imshow("imagemask", markerMask);
+
+
+		int i, j, compCount = 0;
+		vector<vector<Point> > contours;
+		vector<Vec4i> hierarchy;
+
+		findContours(markerMask, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
+
+
+		Mat markers(markerMask.size(), CV_32S);
+		markers = Scalar::all(0);
+		int idx = 0;
+		for (; idx >= 0; idx = hierarchy[idx][0], compCount++)
+			drawContours(markers, contours, idx, Scalar::all(compCount + 1), -1, 8, hierarchy, INT_MAX);
+
+		watershed(image, markers);
+
+		
+
+
+
+		// paint the watershed image
+		 opp = 0;
+		for (i = 0; i < markers.rows; i++){
+			for (j = 0; j < markers.cols; j++){
+				if (markers.at<int>(i, j) == -1){
+					rescont.at<Vec3b>(i, j) = Vec3b(255, 255, 255);
+				}
+				if (markers.at<int>(i, j) == 1){
+					opp++;
+				}
+			}
+		}
+		
+		//cout <<"opp: "<< opp << endl;
+
+
+		cvtColor(rescont, output, CV_RGB2GRAY);
+		inRange(output, 220, 255, output);
+		//imshow("rescont", output);
+
+
+
+		int index = 0;
+		vector<Point> lanepoints;
+		lanepoints.clear();
+		//cout << output.rows<<"," << output.cols << endl;
+		for (int i = 1; i < image.cols-2; i++){
+			if (output.at<uchar>(image.rows-2,i) == 255){
+				lanepoints.push_back(Point(i, image.rows - 2));
+			}
+		}
+
+		lanewidth = lanepoints[1].x - lanepoints[0].x;
+		Point lanemid(lanepoints[0].x + (lanewidth / 2), mid.y);
+		
+		//cout << "baan breedte: " << lanewidth << endl;
+
+
+
+		double buffer = 10;
+		double shift=0;
+		if (abs(picmid.x - lanemid.x) > 20){
+		if (picmid.x> lanemid.x){
+			shift = -10;
+		}
+		else {
+			shift =10;
+		}
+		}
+
+		p0 = Point(lanepoints[0].x - buffer + shift, lanepoints[0].y);
+		p1 = Point(lanepoints[1].x + buffer + shift, lanepoints[0].y);
+		mid.x += shift;
+		
+	}
+
+	//imshow("output", output);
+
+
+		//circle(image, mid, 5, Scalar(0, 255, 0), 5);
+
+		//circle(image, p0, 5, Scalar(0,0,255), 5);
+		//circle(image, p1, 5, Scalar(0, 0, 255), 5);
+		//circle(image, Point(mid.x,image.rows), 5, Scalar(0, 255, 0), 5);
+
+
+		Mat ver(image.size(), CV_8UC1);
+		Sobel(output, ver, CV_8UC1, 1, 0);
+		//imshow("horizontal away", ver);
+		
+
+		LineFinder lf;
+		lf.setLineLengthAndGap(15, 20);
+		lf.setMinVote(30);
+		lf.findLines(ver);
+		lf.drawDetectedLines(ver, Scalar(255));
+		//imshow("rescontss", ver);
+		HoughLines(ver, lines, 1, CV_PI / 180, 75);
+		lh.addLines(lines, image);
+
+		return controle(image, p0, mid, p1,opp);
+
+	
+}
+
+vector<Line> Analyse::controle(Mat & image, Point b, Point m, Point l, int opp){
+	vector<Line> lines = lh.findNBestLines(2);
+	Point middle(image.cols / 2, image.rows);
+	int interval = 95;
+
+	if (lines.size() == 2){
+		bool error = false;
+		double linewidth = abs(lines[0].pt2.x - lines[1].pt2.x);
+		cout << "2lines" << endl;
+		if (opp < 30000){
+			cout << "error opp to little" << endl;
+			error = true;
+		}
+		if (lines[0].pt2.x > lines[1].pt2.x){
+			Line h = lines[1];
+			lines[1] = lines[0];
+			lines[0] = h;
+		}
+		
+		if (abs(b.x - lines[0].pt2.x) > interval){
+			cout << "error begin point " << endl;
+			error = true;
+
+		}
+		if (abs(l.x - lines[1].pt2.x) > interval){
+			cout << "error end point " << endl;
+			error = true;
+		}
+		if (linewidth > 700){
+			error = true;
+			cout << "dubbele road detection" << endl;
+			/*Point mid(lines[0].pt2.x + (lines[1].pt2.x - lines[0].pt2.x) / 2, lines[0].pt2.y);
+			line(image, mid, Point(mid.x, lines[0].a()*mid.x + lines[0].b()), Scalar(210, 0, 0), 2);*/
+			if (abs(b.x - lines[0].pt2.x) < interval){
+				//spiegel beginline
+				//line(image,l, Point(m.x, lines[0].a()*m.x + lines[0].b()), Scalar(210, 0, 0), 10);
+				lines[1] = Line(Point(m.x, lines[0].a()*m.x + lines[0].b()),l);
+			
+			}
+			else if (abs(l.x - lines[1].pt2.x) < interval){
+				//spiegel endline
+				//line(image, b, Point(m.x, lines[1].a()*m.x + lines[1].b()), Scalar(210, 0, 0), 10);
+				lines[0] = Line( Point(m.x, lines[1].a()*m.x + lines[1].b()),b);
+			}
+			//waitKey(0);
+		}
+		if (!error){
+			//waitKey(0);
+		}
+		
+	}
+	else if (lines.size() == 1){
+		cout << "1line" << endl;
+		
+		if (abs(b.x - lines[0].pt2.x) < interval){
+			//spiegel beginline
+			//line(image, Point(m.x + abs(lines[0].pt2.x - m.x), image.rows), Point(m.x, lines[0].a()*m.x + lines[0].b()), Scalar(210, 0, 0), 2);
+			lines.push_back(Line(Point(m.x, lines[0].a()*m.x + lines[0].b()), Point(m.x + abs(lines[0].pt2.x - m.x), image.rows)));
+		}
+		else if (abs(l.x - lines[0].pt2.x) < interval){
+			//spiegel endline
+			//line(image, Point(m.x - abs(lines[0].pt2.x - m.x), image.rows), Point(m.x, lines[0].a()*m.x + lines[0].b()), Scalar(210, 0, 0), 2);
+			lines.push_back(lines[0]);
+			lines[0] = Line(Point(m.x, lines[0].a()*m.x + lines[0].b()), Point(m.x - abs(lines[0].pt2.x - m.x), image.rows));
+		}
+		else {
+			cout << "not repaireable" << endl;
+		}
+	}
+
+	return lines;
+}
 
 /*
 voert alle methodes uit op de foto's
 */
-void Analyse::processimage(Mat& image){
+void Analyse::processimage(Mat& image,string name){
 	//imshow("before", image);
 
 	Analyse analyse;
 	//imshow("result1", analyse.findEdgeLines(image));
-	
-	analyse.findRoadMarkings(image);
-
 	//imwrite("./results/"+name, result2);
+	
+	Chrono chr;
 
-	analyse.findEdges(image);
+	//chr.start();
+	//analyse.findRoadMarkings(image);
+	//chr.stop();
+	//cout << "find roadmarkings " << chr.tijd() << endl;
 
 	
+	//chr.start();
+	//analyse.findEdges(image);
+	//chr.stop();
+	//cout << "findedges " << chr.tijd() << endl;
 
-	analyse.findVerticalLines(image);
+
+	//chr.start();
+	//analyse.findVerticalLines(image);
+	//chr.stop();
+	//cout << "findverticallines " << chr.tijd() << endl;
+
+	chr.start();
+	analyse.waterFilter(image);
+	chr.stop();
+	cout << "watershed " << chr.tijd() << endl;
 
 	analyse.printResult(image);
-	waitKey(0);
+	//if (result.dims != 0){
+	//	imwrite("./results/" + name, result);
+	//}
+	
+	//waitKey(0);
 }

@@ -6,11 +6,11 @@
 #include <opencv\cv.h>						// Jens
 #include "linehandler.h"
 using namespace std;
-//using namespace cv;	
+//using namespace cv;
 class Analyse{
 public:
 	void readallpics(cv::String directory);
-	void processimage(cv::Mat& image);
+	void processimage(cv::Mat& image, string name);
 	cv::Mat findEdgeLines(cv::Mat image);
 	void findEdges(cv::Mat& image);
 	void findRoadMarkings(cv::Mat& image);
@@ -18,6 +18,9 @@ public:
 	cv::Mat noiseFilter(cv::Mat image, int noise);
 	void findVerticalLines(cv::Mat& image);
 	void printResult(cv::Mat & image);
+	cv::Mat watershedImage(cv::Mat & image, vector<Line>& lines);
+	vector<Line> waterFilter(cv::Mat & image);
+	vector<Line> controle(cv::Mat & image, cv::Point b, cv::Point m, cv::Point l, int opp);
 private:
 	LineHandler lh;
 	

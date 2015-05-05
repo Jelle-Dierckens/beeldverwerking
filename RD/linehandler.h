@@ -15,9 +15,17 @@ using namespace std;
 
 class Line{
 public:
+	Line(cv::Point pt1, cv::Point pt2) : pt1(pt1), pt2(pt2){ degree = atan(a() *(PI/180)); }
 	Line(cv::Point pt1, cv::Point pt2, int degree) : pt1(pt1), pt2(pt2), degree(degree){}
 	cv::Point pt1, pt2;
-	int degree;
+	double degree;
+	double a(){
+		return (double)(pt2.y - pt1.y) / (pt2.x - pt1.x);
+
+	}
+	double b(){
+		return 	(double)(pt1.y - (a()*pt1.x));
+	}
 };
 
 class Group {
@@ -100,8 +108,9 @@ public:
 		vector<Line> resultlines = findNBestLines(N);
 		vector<Line>::iterator it1 = resultlines.begin();
 		while (it1 != resultlines.end()){
-			line(image, (*it1).pt1, (*it1).pt2, cv::Scalar(255), 2);
-			std::cout << (*it1).pt1 << (*it1).pt2 << (*it1).degree << std::endl;
+			//line(markerMask, prevPt, pt, cv::Scalar::all(255), 5, 8, 0);
+			line(image, (*it1).pt1, (*it1).pt2, cv::Scalar::all(255), 5,8,0);
+			//std::cout << (*it1).pt1 << (*it1).pt2 << (*it1).degree << std::endl;
 			it1++;
 		}
 	}
@@ -148,30 +157,34 @@ public:
 		cv::Point i;
 		if (lines.size() > 1 && intersection(lines[0], lines[1], i)){
 			points.push_back(i);
-			for each (Line l in lines){
-				points.push_back(lowerPoint(l));
+			vector<Line>::iterator it = lines.begin();
+			while (it != lines.end()){
+				points.push_back(lowerPoint(*it));
+				it++;
 			}
 		}
 		else{
-			for each (Line l in lines){
-				points.push_back(l.pt1);
-				points.push_back(l.pt2);
+			vector<Line>::iterator it = lines.begin();
+			while (it != lines.end()){
+				points.push_back((*it).pt1);
+				points.push_back((*it).pt2);
+				it++;
 			}
 		}
-		fill(image, points);
-
+		if (!points.empty())
+			fill(image, points);
+		
 	}
 
 	// Fills the polygon defined by the given points, on top of the given image
 	// color is optional, white by default
-	void fill(cv::Mat &image, vector<cv::Point> points, cv::Scalar color = cv::Scalar(100)){
+	void fill(cv::Mat &image, vector<cv::Point> points, cv::Scalar color = cv::Scalar::all(255)){
 		vector<vector<cv::Point> > allPoints;
 		allPoints.push_back(points);
 		cv::fillPoly(image, allPoints, color);
-
 	}
 
-	// Finds the intersection of two lines, or returns false.
+	// Finds the intersection of two lines and puts it in Point i, or returns false.
 	bool intersection(Line line1, Line line2, cv::Point &intersection)
 	{
 		cv::Point o1 = line1.pt1;
