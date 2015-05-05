@@ -28,6 +28,7 @@ int main(int argc, char** argv)
 	//cv::String directory = "C:\\Users\\Frederick\\Documents\\Visual Studio 2013\\Projects\\RoadDetection\\data_road\\data_road\\training\\image_2\\";
 	//directory Jens:
 	cv::String directory = "C:\\Beeldverwerking\\data_road\\training\\image_2\\";
+	cv::String bev_directory = "C:\\Beeldverwerking\\data_road\\training\\image_bev\\";
 
 	analyse.readallpics(directory);
 

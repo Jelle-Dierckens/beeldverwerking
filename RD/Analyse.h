@@ -21,6 +21,8 @@ public:
 	cv::Mat watershedImage(cv::Mat & image, vector<Line>& lines);
 	vector<Line> waterFilter(cv::Mat & image);
 	vector<Line> controle(cv::Mat & image, cv::Point b, cv::Point m, cv::Point l, int opp);
+	void findColor(cv::Mat &image, cv::Mat &mask);
+	bool isWhite(const cv::Mat &mask, int x, int y, int dx, int dy, double threshold = 0.75);
 private:
 	LineHandler lh;
 	

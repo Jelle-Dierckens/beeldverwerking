@@ -833,6 +833,76 @@ vector<Line> Analyse::controle(Mat & image, Point b, Point m, Point l, int opp){
 	return lines;
 }
 
+void Analyse::findColor(Mat &image, Mat &mask){
+	Point center = Point(image.size().width/2, image.size().height);
+	//cout << center << endl;
+	//ellipse(image, center, Size(3, 3), 0, 0, 360, Scalar(255,255,255), 3);
+	int rect_width = 40, rect_height = 20;
+	Point rect_point = Point(center.x - rect_width/2 / 2, center.y-rect_height*3/2);	// *3/2 is om zeker de eventuele zwarte rand onderaan niet mee te nemen 
+	Rect rect(rect_point.x, rect_point.y, rect_width, rect_height);
+
+	Mat cpy = image.clone();
+	Mat roi = Mat(cpy, rect);
+
+	Scalar m = mean(roi);
+	rectangle(cpy, rect, m, CV_FILLED);
+	rectangle(cpy, rect, Scalar(255, 255, 255));
+	imshow("Color", cpy);
+
+	int diff = 40;
+	Scalar lowerb = Scalar(m[0] - diff, m[1] - diff, m[2] - diff, m[3]);
+	Scalar upperb = Scalar(m[0] + diff, m[1] + diff, m[2] + diff, m[3]);
+	inRange(image, lowerb, upperb, mask);
+	cout << mask.dims << endl;
+	imshow("mask", mask);
+	
+	int N = 10, lighter = 130;
+	int i = mask.rows-1;
+	while (i >= 0){
+		int j = mask.cols/2;
+		while (j >= 0 && isWhite(mask,j,i,N,N)){
+			j--;
+		}
+		while (j >= 0){
+			mask.at<uchar>(Point(j,i)) = 0;
+			image.at<uchar>(Point(j * 3, i)) += ((image.at<uchar>(Point(j * 3, i)) < 255-lighter ) ? lighter : (255 - image.at<uchar>(Point(j * 3, i))));
+			image.at<uchar>(Point(j * 3 + 1, i)) += ((image.at<uchar>(Point(j * 3 + 1, i)) < 255 - lighter) ? lighter : (255 - image.at<uchar>(Point(j * 3 + 1, i))));
+			image.at<uchar>(Point(j * 3 + 2, i)) += ((image.at<uchar>(Point(j * 3 + 2, i)) < 255 - lighter) ? lighter : (255 - image.at<uchar>(Point(j * 3 + 2, i))));
+			j--;
+		}
+		j = mask.cols/2;
+		while (j < mask.cols && isWhite(mask, j, i, N,N)){
+			j++;
+		}
+		while (j < mask.cols){
+			mask.at<uchar>(Point(j, i)) = 0;
+			image.at<uchar>(Point(j * 3, i)) += ((image.at<uchar>(Point(j * 3, i)) < 255 - lighter) ? lighter : (255 - image.at<uchar>(Point(j * 3, i))));
+			image.at<uchar>(Point(j * 3 + 1, i)) += ((image.at<uchar>(Point(j * 3 + 1, i)) < 255 - lighter) ? lighter : (255 - image.at<uchar>(Point(j * 3 + 1, i))));
+			image.at<uchar>(Point(j * 3 + 2, i)) += ((image.at<uchar>(Point(j * 3 + 2, i)) < 255 - lighter) ? lighter : (255 - image.at<uchar>(Point(j * 3 + 2, i))));
+			j++;
+		}
+		i--;
+	}
+	imshow("filtered mask", mask);
+}
+
+bool Analyse::isWhite(const Mat &mask, int x, int y, int dx, int dy, double threshold){
+	int black = 0, white = 0;
+	for (int i = x - dx / 2; i <= x + dx / 2; i++){
+		for (int j = y - dy / 2; j <= y + dy / 2; j++){
+			if (i >= 0 && i < mask.cols && j >= 0 && j < mask.rows){
+				if (mask.at<uchar>(Point(i, j)) != 0){
+					white++;
+				}
+				else{
+					black++;
+				}
+			}
+		}
+	}
+	return (white >= (white+black)*threshold);
+}
+
 /*
 voert alle methodes uit op de foto's
 */
@@ -862,10 +932,15 @@ void Analyse::processimage(Mat& image,string name){
 	//chr.stop();
 	//cout << "findverticallines " << chr.tijd() << endl;
 
-	chr.start();
-	analyse.waterFilter(image);
-	chr.stop();
-	cout << "watershed " << chr.tijd() << endl;
+	//chr.start();
+	//analyse.waterFilter(image);
+	//chr.stop();
+	//cout << "watershed " << chr.tijd() << endl;
+
+	//chr.start();
+	analyse.findColor(image,Mat());
+	//chr.stop();
+	//cout << "watershed " << chr.tijd() << endl;
 
 	analyse.printResult(image);
 	//if (result.dims != 0){
