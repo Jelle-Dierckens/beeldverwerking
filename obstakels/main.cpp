@@ -25,10 +25,13 @@ int main(int argc, char** argv)
 	// directory Frederick:
 	//cv::String directory = "C:\\Users\\Frederick\\Documents\\Visual Studio 2013\\Projects\\RoadDetection\\data_road\\data_road\\training\\image_2\\";
 	//directory Jens:
-	String directory = "C:\\Beeldverwerking\\data_road\\training\\image_2\\";
-	String bev_directory = "C:\\Beeldverwerking\\data_road\\training\\image_bev\\";
-
+	//~ String directory = "C:\\Beeldverwerking\\data_road\\training\\image_2\\";
+	//~ String bev_directory = "C:\\Beeldverwerking\\data_road\\training\\image_bev\\";
+	String directory = "../../data_road/training/image_2/";
+	
 	analyse.readallpics(directory);
+	
+	printf("exit\n");
 
 	return 0;
 }

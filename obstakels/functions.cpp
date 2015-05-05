@@ -41,7 +41,7 @@ void Analyse::readallpics(String directory){
 					//cout << filename << endl;
 					Mat image = imread(filename, IMREAD_COLOR); // Read the file
 					Analyse analyse;
-					//~ analyse.processimage(image, name);
+					analyse.processimage(image, name);
 				}
             }
 		}
@@ -838,7 +838,7 @@ void Analyse::readallpics(String directory){
 //~ 
 	//~ return lines;
 //~ }
-//~ 
+
 //~ void Analyse::findColor(Mat &image, Mat &mask){
 	//~ Point center = Point(image.size().width/2, image.size().height);
 	//~ //cout << center << endl;
@@ -891,7 +891,7 @@ void Analyse::readallpics(String directory){
 	//~ }
 	//~ imshow("filtered mask", mask);
 //~ }
-//~ 
+
 //~ bool Analyse::isWhite(const Mat &mask, int x, int y, int dx, int dy, double threshold){
 	//~ int black = 0, white = 0;
 	//~ for (int i = x - dx / 2; i <= x + dx / 2; i++){
@@ -908,50 +908,52 @@ void Analyse::readallpics(String directory){
 	//~ }
 	//~ return (white >= (white+black)*threshold);
 //~ }
-//~ 
-//~ /*
-//~ voert alle methodes uit op de foto's
-//~ */
-//~ void Analyse::processimage(Mat& image,string name){
-	//~ //imshow("before", image);
-//~ 
-	//~ Analyse analyse;
-	//~ //imshow("result1", analyse.findEdgeLines(image));
-	//~ //imwrite("./results/"+name, result2);
-	//~ 
+
+/*
+voert alle methodes uit op de foto's
+*/
+void Analyse::processimage(Mat& image,string name){
+	//imshow("before", image);
+
+	Analyse analyse;
+	//imshow("result1", analyse.findEdgeLines(image));
+	//imwrite("./results/"+name, result2);
+	
 	//~ Chrono chr;
-//~ 
-	//~ //chr.start();
-	//~ //analyse.findRoadMarkings(image);
-	//~ //chr.stop();
-	//~ //cout << "find roadmarkings " << chr.tijd() << endl;
-//~ 
-	//~ 
-	//~ //chr.start();
-	//~ //analyse.findEdges(image);
-	//~ //chr.stop();
-	//~ //cout << "findedges " << chr.tijd() << endl;
-//~ 
-//~ 
-	//~ //chr.start();
-	//~ //analyse.findVerticalLines(image);
-	//~ //chr.stop();
-	//~ //cout << "findverticallines " << chr.tijd() << endl;
-//~ 
-	//~ //chr.start();
-	//~ //analyse.waterFilter(image);
-	//~ //chr.stop();
-	//~ //cout << "watershed " << chr.tijd() << endl;
-//~ 
-	//~ //chr.start();
+
+	//chr.start();
+	//analyse.findRoadMarkings(image);
+	//chr.stop();
+	//cout << "find roadmarkings " << chr.tijd() << endl;
+
+	
+	//chr.start();
+	//analyse.findEdges(image);
+	//chr.stop();
+	//cout << "findedges " << chr.tijd() << endl;
+
+
+	//chr.start();
+	//analyse.findVerticalLines(image);
+	//chr.stop();
+	//cout << "findverticallines " << chr.tijd() << endl;
+
+	//chr.start();
+	//analyse.waterFilter(image);
+	//chr.stop();
+	//cout << "watershed " << chr.tijd() << endl;
+
+	//chr.start();
 	//~ analyse.findColor(image,Mat());
-	//~ //chr.stop();
-	//~ //cout << "watershed " << chr.tijd() << endl;
-//~ 
+	//chr.stop();
+	//cout << "watershed " << chr.tijd() << endl;
+
 	//~ analyse.printResult(image);
-	//~ //if (result.dims != 0){
-	//~ //	imwrite("./results/" + name, result);
-	//~ //}
-	//~ 
-	//~ //waitKey(0);
-//~ }
+	//if (result.dims != 0){
+	//	imwrite("./results/" + name, result);
+	//}
+	
+	imshow("Image", image);
+	
+	waitKey(0);
+}

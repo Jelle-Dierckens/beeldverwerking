@@ -10,7 +10,7 @@ using namespace std;
 class Analyse{
 public:
 	void readallpics(cv::String directory);
-	//~ void processimage(cv::Mat& image, string name);
+	void processimage(cv::Mat& image, string name);
 	//~ cv::Mat findEdgeLines(cv::Mat image);
 	//~ void findEdges(cv::Mat& image);
 	//~ void findRoadMarkings(cv::Mat& image);
