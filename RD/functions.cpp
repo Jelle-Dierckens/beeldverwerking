@@ -903,6 +903,100 @@ bool Analyse::isWhite(const Mat &mask, int x, int y, int dx, int dy, double thre
 	return (white >= (white+black)*threshold);
 }
 
+template <typename _Tp>
+void OLBP_(Mat &src, Mat &dst) {
+	dst = Mat::zeros(src.rows - 2, src.cols - 2, CV_8UC1);
+	for (int i = 1; i<src.rows - 1; i++) {
+		for (int j = 1; j<src.cols - 1; j++) {
+			_Tp center = src.at<_Tp>(i, j);
+			unsigned char code = 0;
+			code |= (src.at<_Tp>(i - 1, j - 1) > center) << 7;
+			code |= (src.at<_Tp>(i - 1, j) > center) << 6;
+			code |= (src.at<_Tp>(i - 1, j + 1) > center) << 5;
+			code |= (src.at<_Tp>(i, j + 1) > center) << 4;
+			code |= (src.at<_Tp>(i + 1, j + 1) > center) << 3;
+			code |= (src.at<_Tp>(i + 1, j) > center) << 2;
+			code |= (src.at<_Tp>(i + 1, j - 1) > center) << 1;
+			code |= (src.at<_Tp>(i, j - 1) > center) << 0;
+			dst.at<_Tp>(i - 1, j - 1) = code;
+		}
+	}
+}
+
+template <typename _Tp>
+void ELBP_(Mat &src, Mat &dst, int radius, int neighbors) {
+	neighbors = max(min(neighbors, 31), 1); // set bounds...
+	// Note: alternatively you can switch to the new OpenCV Mat_
+	// type system to define an unsigned int matrix... I am probably
+	// mistaken here, but I didn't see an unsigned int representation
+	// in OpenCV's classic typesystem...
+	dst = Mat::zeros(src.rows - 2 * radius, src.cols - 2 * radius, CV_32SC1);
+	for (int n = 0; n<neighbors; n++) {
+		// sample points
+		float x = static_cast<float>(radius)* cos(2.0*CV_PI*n / static_cast<float>(neighbors));
+		float y = static_cast<float>(radius)* -sin(2.0*CV_PI*n / static_cast<float>(neighbors));
+		// relative indices
+		int fx = static_cast<int>(floor(x));
+		int fy = static_cast<int>(floor(y));
+		int cx = static_cast<int>(ceil(x));
+		int cy = static_cast<int>(ceil(y));
+		// fractional part
+		float ty = y - fy;
+		float tx = x - fx;
+		// set interpolation weights
+		float w1 = (1 - tx) * (1 - ty);
+		float w2 = tx  * (1 - ty);
+		float w3 = (1 - tx) *      ty;
+		float w4 = tx  *      ty;
+		// iterate through your data
+		for (int i = radius; i < src.rows - radius; i++) {
+			for (int j = radius; j < src.cols - radius; j++) {
+				float t = w1*src.at<_Tp>(i + fy, j + fx) + w2*src.at<_Tp>(i + fy, j + cx) + w3*src.at<_Tp>(i + cy, j + fx) + w4*src.at<_Tp>(i + cy, j + cx);
+				// we are dealing with floating point precision, so add some little tolerance
+				dst.at<unsigned int>(i - radius, j - radius) += ((t > src.at<_Tp>(i, j)) && (abs(t - src.at<_Tp>(i, j)) > std::numeric_limits<float>::epsilon())) << n;
+			}
+		}
+	}
+}
+
+void lpg(const Mat & image, Mat & dst, double threshold_fraction = 0.04){
+	Mat grey;
+	cvtColor(image, grey, COLOR_RGB2GRAY);
+	grey.copyTo(dst);
+	double minValue, maxValue;
+	minMaxLoc(grey, &minValue, &maxValue);
+	uchar thres = threshold_fraction * (maxValue-minValue);
+	//dst = Mat::zeros(image.rows - 2, image.cols - 2, image.depth());
+	for (int i = 1; i < grey.rows - 1; i++){
+		for (int j = 1; j < grey.cols - 1; j++){
+			uchar center = grey.at<uchar>(i, j);
+			uchar points[8];
+			points[0] = grey.at<uchar>(i - 1, j - 1) >= center + thres ? 1 : 0;
+			points[1] = grey.at<uchar>(i - 1, j) >= center + thres ? 1 : 0;
+			points[2] = grey.at<uchar>(i - 1, j + 1) >= center + thres ? 1 : 0;
+			points[3] = grey.at<uchar>(i, j - 1) >= center + thres ? 1 : 0;
+			points[4] = grey.at<uchar>(i, j + 1) >= center + thres ? 1 : 0;
+			points[5] = grey.at<uchar>(i + 1, j - 1) >= center + thres ? 1 : 0;
+			points[6] = grey.at<uchar>(i + 1, j) >= center + thres ? 1 : 0;
+			points[7] = grey.at<uchar>(i + 1, j + 1) >= center + thres ? 1 : 0;
+			uchar mult[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
+			center = 0;
+			for (int k = 0; k < 8; k++){
+				center += points[k] * mult[k];
+			}
+			dst.at<uchar>(i, j) = center;
+		}
+	}
+}
+
+void Analyse::findTextures(Mat &image){
+	Mat cpy;
+	//image.copyTo(cpy);
+	lpg(image, cpy);
+	imshow("LBP", cpy);
+
+}
+
 /*
 voert alle methodes uit op de foto's
 */
@@ -938,9 +1032,14 @@ void Analyse::processimage(Mat& image,string name){
 	//cout << "watershed " << chr.tijd() << endl;
 
 	//chr.start();
-	analyse.findColor(image,Mat());
+	//analyse.findColor(image,Mat());
 	//chr.stop();
-	//cout << "watershed " << chr.tijd() << endl;
+	//cout << "color " << chr.tijd() << endl;
+
+	//chr.start();
+	analyse.findTextures(image);
+	//chr.stop();
+	//cout << "texture " << chr.tijd() << endl;
 
 	analyse.printResult(image);
 	//if (result.dims != 0){

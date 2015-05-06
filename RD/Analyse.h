@@ -23,6 +23,7 @@ public:
 	vector<Line> controle(cv::Mat & image, cv::Point b, cv::Point m, cv::Point l, int opp);
 	void findColor(cv::Mat &image, cv::Mat &mask);
 	bool isWhite(const cv::Mat &mask, int x, int y, int dx, int dy, double threshold = 0.75);
+	void findTextures(cv::Mat &image);
 private:
 	LineHandler lh;
 	
