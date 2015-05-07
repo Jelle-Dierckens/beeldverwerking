@@ -49,12 +49,12 @@ int main(int argc, char **argv){
         resize(gem, gem, Size(image.cols, image.rows));
         GaussianBlur(image,image, Size(3,3),0);
         cvtColor(image, image, COLOR_BGR2HLS);
-        int xi,yi,zi;
+        int h,l,s;
         for(int i=0; i<image.rows; i++) {
             for (int j=0; j<image.cols; j++) {
-                xi=image.at<Vec3b>(i,j)[0];
-                yi=image.at<Vec3b>(i,j)[1];
-                zi=image.at<Vec3b>(i,j)[2];
+                h=image.at<Vec3b>(i,j)[0];
+                l=image.at<Vec3b>(i,j)[1];
+                s=image.at<Vec3b>(i,j)[2];
                 float a,b;
                 //a=1-(std::max(std::min(0.8,gem.at<Vec3b>(i,j)[0]/256.0),0.2));
                 a=1-gem.at<Vec3b>(i,j)[0]/256.0;
@@ -65,7 +65,7 @@ int main(int argc, char **argv){
                 else {
                    b=256;
                 }*/
-                b=1-hls_bayes.at<float>(xi/2.56, yi/2.56, zi/2.56);
+                b=1-hls_bayes.at<float>(h/2.56, l/2.56, s/2.56);
                if(a<0.5 && b<0.8) {
                    image.at<Vec3b>(i,j)[1]=0;
                }
