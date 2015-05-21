@@ -31,8 +31,8 @@ public:
             //waitKey(0);
             calcBinaryClassifiers();
         }
-        namedWindow("graph");
-        Mat graphImage=Mat::zeros(1024,1024,CV_8U);
+        //namedWindow("graph");
+        //Mat graphImage=Mat::zeros(1024,1024,CV_8U);
         vector<pair<double, double> > values;
         vector<double> sensitivity=getSensitivity();
         vector<double> specificity=getSpecificity();
@@ -45,8 +45,8 @@ public:
             }
         }
         cout<<"aprox. area under curve: "<<areaUnderCurve<<endl;
-        graphview::createGraph(graphImage, values);
-        imshow("graph", graphImage);
+        //graphview::createGraph(graphImage, values);
+        //imshow("graph", graphImage);
         waitKey(10);
     }
     void analize(std::string inputdirectory, std::string truthdirectory);

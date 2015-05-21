@@ -15,6 +15,7 @@ SET(Header_Files
                         src/headers/roc_analizer.h
                         src/headers/Ifeature.h
                         src/headers/dummyFeature.h
+                        src/headers/Bayes.h
                         src/headers/graphview.h)
 SET (Sources
                         src/roc_analizer.cpp

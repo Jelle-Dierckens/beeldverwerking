@@ -3,6 +3,7 @@
 #include "headers/dummyFeature.h"
 #include "headers/graphview.h"
 #include <vector>
+#include "headers/Bayes.h"
 
 using namespace std;
 using namespace cv;
@@ -11,18 +12,18 @@ int main(int argc, char** argv)
 {
 
 
-        if (argc <2) {
-            cout<<"args: inputimage  truthimage";
-            return 255;
-        }
-        Mat truthImage;
-        Mat inputImage;
+    if (argc <2) {
+        cout<<"args: inputimage  truthimage";
+        return 255;
+    }
+    Mat truthImage;
+    Mat inputImage;
 
-        inputImage=imread(argv[1]);
-        truthImage=imread(argv[2]);
-    dummyFeature feature(argv[3]);
+    inputImage=imread(argv[1]);
+    truthImage=imread(argv[2]);
+
+    Bayes feature(argv[3]);
     Roc_analizer analizer(feature);
-    Mat outputImage;
     //feature.applyFeature(inputImage, outputImage, 0.5);
     analizer.analize(inputImage, truthImage);
     int wait;
