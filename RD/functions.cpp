@@ -11,6 +11,7 @@
 #include "chrono.h"
 #include <math.h>
 #include <vector>
+#include <fstream>
 
 using namespace cv;
 using namespace std;
@@ -25,16 +26,25 @@ void Analyse::readallpics(cv::String directory){
 	const char* diropen = directory.c_str();
 	//char* diropen = "C:\\Users\\Frederick\\Documents\\Visual Studio 2013\\Projects\\RoadDetection\\data_road\\data_road\\training\\image_2\\";
 	if ((dir = opendir(diropen)) != NULL) {
+		cout << "Reading the Bayes matrix...";
+		//Mat bayes = readBayes();
+		cout << " done." << endl;
+		cout << "Reading the image for the average ground truth...";
+		//Mat gem = readAvgTruth();
+		cout << " done." << endl;
+		cout << "Preparing probability images:" << endl;
 		/* print all the files and directories within directory */
 		while ((ent = readdir(dir)) != NULL) {
 			String name = ent->d_name;
 			if (name.find(".png") < name.length()){
 				if (name != "uu_000067.png"){
-					printf("%s\n", ent->d_name);
+					printf("\t%s\n", ent->d_name);
 					String filename = directory + ent->d_name;
 					//cout << filename << endl;
 					Mat image = imread(filename, IMREAD_COLOR); // Read the file
 					Analyse analyse;
+					//compareBayes(image, bayes,gem);
+					//writeProb(image, name);
 					analyse.processimage(image, name);
 				}
             }
@@ -842,6 +852,7 @@ void Analyse::findColor(Mat &image, Mat &mask){
 	Rect rect(rect_point.x, rect_point.y, rect_width, rect_height);
 
 	Mat cpy = image.clone();
+	Mat out = image.clone();
 	Mat roi = Mat(cpy, rect);
 
 	Scalar m = mean(roi);
@@ -852,38 +863,61 @@ void Analyse::findColor(Mat &image, Mat &mask){
 	int diff = 40;
 	Scalar lowerb = Scalar(m[0] - diff, m[1] - diff, m[2] - diff, m[3]);
 	Scalar upperb = Scalar(m[0] + diff, m[1] + diff, m[2] + diff, m[3]);
-	inRange(image, lowerb, upperb, mask);
-	cout << mask.dims << endl;
+	inRange(out, lowerb, upperb, mask);
+	cout << out.dims << endl;
 	imshow("mask", mask);
+	Mat filt;
+	mask.copyTo(filt);
 	
-	int N = 10, lighter = 130;
+	int N = 20, lighter = 130;
+	double thres = 0.8;
 	int i = mask.rows-1;
 	while (i >= 0){
 		int j = mask.cols/2;
-		while (j >= 0 && isWhite(mask,j,i,N,N)){
+		while (j >= 0 && isWhite(mask,j,i,N,N,0.8)){
 			j--;
 		}
 		while (j >= 0){
 			mask.at<uchar>(Point(j,i)) = 0;
-			image.at<uchar>(Point(j * 3, i)) += ((image.at<uchar>(Point(j * 3, i)) < 255-lighter ) ? lighter : (255 - image.at<uchar>(Point(j * 3, i))));
-			image.at<uchar>(Point(j * 3 + 1, i)) += ((image.at<uchar>(Point(j * 3 + 1, i)) < 255 - lighter) ? lighter : (255 - image.at<uchar>(Point(j * 3 + 1, i))));
-			image.at<uchar>(Point(j * 3 + 2, i)) += ((image.at<uchar>(Point(j * 3 + 2, i)) < 255 - lighter) ? lighter : (255 - image.at<uchar>(Point(j * 3 + 2, i))));
+			out.at<uchar>(Point(j * 3, i)) += ((out.at<uchar>(Point(j * 3, i)) < 255 - lighter) ? lighter : (255 - out.at<uchar>(Point(j * 3, i))));
+			out.at<uchar>(Point(j * 3 + 1, i)) += ((out.at<uchar>(Point(j * 3 + 1, i)) < 255 - lighter) ? lighter : (255 - out.at<uchar>(Point(j * 3 + 1, i))));
+			out.at<uchar>(Point(j * 3 + 2, i)) += ((out.at<uchar>(Point(j * 3 + 2, i)) < 255 - lighter) ? lighter : (255 - out.at<uchar>(Point(j * 3 + 2, i))));
 			j--;
 		}
 		j = mask.cols/2;
-		while (j < mask.cols && isWhite(mask, j, i, N,N)){
+		while (j < mask.cols && isWhite(mask, j, i, N,N,0.8)){
 			j++;
 		}
 		while (j < mask.cols){
 			mask.at<uchar>(Point(j, i)) = 0;
-			image.at<uchar>(Point(j * 3, i)) += ((image.at<uchar>(Point(j * 3, i)) < 255 - lighter) ? lighter : (255 - image.at<uchar>(Point(j * 3, i))));
-			image.at<uchar>(Point(j * 3 + 1, i)) += ((image.at<uchar>(Point(j * 3 + 1, i)) < 255 - lighter) ? lighter : (255 - image.at<uchar>(Point(j * 3 + 1, i))));
-			image.at<uchar>(Point(j * 3 + 2, i)) += ((image.at<uchar>(Point(j * 3 + 2, i)) < 255 - lighter) ? lighter : (255 - image.at<uchar>(Point(j * 3 + 2, i))));
+			out.at<uchar>(Point(j * 3, i)) += ((out.at<uchar>(Point(j * 3, i)) < 255 - lighter) ? lighter : (255 - out.at<uchar>(Point(j * 3, i))));
+			out.at<uchar>(Point(j * 3 + 1, i)) += ((out.at<uchar>(Point(j * 3 + 1, i)) < 255 - lighter) ? lighter : (255 - out.at<uchar>(Point(j * 3 + 1, i))));
+			out.at<uchar>(Point(j * 3 + 2, i)) += ((out.at<uchar>(Point(j * 3 + 2, i)) < 255 - lighter) ? lighter : (255 - out.at<uchar>(Point(j * 3 + 2, i))));
 			j++;
 		}
 		i--;
 	}
-	imshow("filtered mask", mask);
+
+	int ksize = 3;
+	//medianBlur(mask, filt, ksize);
+	Mat tex;
+	lbp(image, tex);
+	bitwise_and(filt, 255-tex, filt);
+
+	//for (int i = 0; i < mask.rows; i++){
+	//	for (int j = 0; j < mask.cols; j++){
+	//		if (isWhite(mask, j, i, N, N, thres)){
+	//			filt.at<uchar>(Point(j, i)) = 255;
+	//		}else{
+	//			//filt.at<uchar>(Point(j, i)) = 0;
+	//			out.at<uchar>(Point(j * 3, i)) += ((out.at<uchar>(Point(j * 3, i)) < 255 - lighter) ? lighter : (255 - out.at<uchar>(Point(j * 3, i))));
+	//			out.at<uchar>(Point(j * 3 + 1, i)) += ((out.at<uchar>(Point(j * 3 + 1, i)) < 255 - lighter) ? lighter : (255 - out.at<uchar>(Point(j * 3 + 1, i))));
+	//			out.at<uchar>(Point(j * 3 + 2, i)) += ((out.at<uchar>(Point(j * 3 + 2, i)) < 255 - lighter) ? lighter : (255 - out.at<uchar>(Point(j * 3 + 2, i))));
+	//		}
+	//	}
+	//}
+	imshow("filtered mask", filt);
+	imshow("Color Detection", out);
 }
 
 bool Analyse::isWhite(const Mat &mask, int x, int y, int dx, int dy, double threshold){
@@ -902,6 +936,295 @@ bool Analyse::isWhite(const Mat &mask, int x, int y, int dx, int dy, double thre
 	}
 	return (white >= (white+black)*threshold);
 }
+
+void Analyse::lbp(const Mat & image, Mat & dst, int radius, double threshold_fraction){
+	Mat grey;
+	cvtColor(image, grey, COLOR_RGB2GRAY);
+	grey.copyTo(dst);
+	double minValue, maxValue;
+	minMaxLoc(grey, &minValue, &maxValue);
+	uchar thres = threshold_fraction * (maxValue-minValue);
+	//dst = Mat::zeros(image.rows - 2, image.cols - 2, image.depth());
+	for (int i = radius; i < grey.rows - radius; i++){
+		for (int j = radius; j < grey.cols - radius; j++){
+			uchar center = grey.at<uchar>(i, j);
+			uchar points[8];
+			points[0] = grey.at<uchar>(i - radius, j - radius) >= center + thres ? 1 : 0;
+			points[1] = grey.at<uchar>(i - radius, j) >= center + thres ? 1 : 0;
+			points[2] = grey.at<uchar>(i - radius, j + radius) >= center + thres ? 1 : 0;
+			points[3] = grey.at<uchar>(i, j - radius) >= center + thres ? 1 : 0;
+			points[4] = grey.at<uchar>(i, j + radius) >= center + thres ? 1 : 0;
+			points[5] = grey.at<uchar>(i + radius, j - radius) >= center + thres ? 1 : 0;
+			points[6] = grey.at<uchar>(i + radius, j) >= center + thres ? 1 : 0;
+			points[7] = grey.at<uchar>(i + radius, j + radius) >= center + thres ? 1 : 0;
+			uchar mult[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
+			center = 0;
+			for (int k = 0; k < 8; k++){
+				center += points[k] * mult[k];
+			}
+			dst.at<uchar>(i, j) = center;
+		}
+	}
+}
+
+vector<float> Analyse::devideInBins(Mat patch, int bincount){
+	vector<float> bins;
+	bins.resize(bincount, 0);
+	int binwidth = 255 / bincount;
+	for (int r = 0; r < patch.rows; r++){
+		for (int c = 0; c < patch.cols; c++){
+			bins[(patch.at<uchar>(r, c)*bincount / 255)%bincount]++;
+		}
+	}
+	return bins;
+}
+
+void Analyse::findTextures(Mat &image){
+	Mat cpy;
+	//image.copyTo(cpy);
+	lbp(image, cpy,0.02);
+	imshow("LBP", cpy);
+
+}
+
+Mat Analyse::readBayes(){
+	string bayes_name = "C:\\Beeldverwerking\\beeldverwerking\\ProjectX\\ProjectX\\bayes.csv";
+	ifstream bayes(bayes_name);
+	int dim = 100;
+	int dims[3] = { dim, dim, dim };
+	Mat hls_bayes(3, dims, CV_32F);
+
+	char delim = ';';
+	std::string x, y, z, value;
+	std::string inputline;
+	std::getline(bayes, inputline);
+	while (!bayes.eof()) {
+		std::stringstream stringstr(inputline);
+		//std::cout<<inputline<<"\n";
+		std::getline(stringstr, x, delim);
+		std::getline(stringstr, y, delim);
+		std::getline(stringstr, z, delim);
+		std::getline(stringstr, value, delim);
+		hls_bayes.at<float>(atoi(x.c_str()), atoi(y.c_str()), atoi(z.c_str())) = std::stof(value);
+		std::getline(bayes, inputline);
+	}
+	bayes.close();
+	return hls_bayes;
+}
+
+Mat Analyse::readAvgTruth(){
+	String gem_name = "C:\\Beeldverwerking\\beeldverwerking\\ProjectX\\ProjectX\\outputImage.png";
+	Mat gem = imread(gem_name);
+	//imshow("gem", gem);
+	return gem;
+}
+Mat Analyse::compareBayes(Mat &image, Mat &hls_bayes, Mat &gem){
+
+	resize(gem, gem, Size(image.cols, image.rows));
+	GaussianBlur(image, image, Size(3, 3), 0);
+	cvtColor(image, image, COLOR_BGR2HLS);
+	int xi, yi, zi;
+	for (int i = 0; i<image.rows; i++) {
+		for (int j = 0; j<image.cols; j++) {
+			xi = image.at<Vec3b>(i, j)[0];
+			yi = image.at<Vec3b>(i, j)[1];
+			zi = image.at<Vec3b>(i, j)[2];
+			float a, b;
+			//a=1-(std::max(std::min(0.8,gem.at<Vec3b>(i,j)[0]/256.0),0.2));
+			a = 1 - gem.at<Vec3b>(i, j)[0] / 256.0;
+			//b=1-2.5*hls_bayes.at<float>(xi/2.56, yi/2.56, zi/2.56);
+			/*if(hls_bayes.at<float>(xi/2.56, yi/2.56, zi/2.56)>0.2f) {
+			b=0;
+			}
+			else {
+			b=256;
+			}*/
+			b = 1 - hls_bayes.at<float>(xi / 2.56, yi / 2.56, zi / 2.56);
+			if (a<0.5 && b<0.8) {
+				image.at<Vec3b>(i, j)[1] = 0;
+			}
+			else if (a >= 0.5 && b >= 0.8) {
+				image.at<Vec3b>(i, j)[1] = 255;
+			}
+			else {
+				image.at<Vec3b>(i, j)[1] = 125;
+			}
+
+			//image.at<Vec3b>(i,j)[1]=256*((a*b)/(a+b));
+		}
+	}
+	//namedWindow("result");
+	cvtColor(image, image, COLOR_HLS2BGR);
+	//imshow("result", image);
+	//waitKey(0);
+	return image;
+}
+
+void Analyse::writeProb(Mat & image, String name){
+	String dir = "C:\\Beeldverwerking\\beeldverwerking\\ProjectX\\ProjectX\\prob\\";
+	dir += name;
+	imwrite(dir, image);
+
+}
+
+/*
+leest alle foto's en zoekt vakjes die zeker weg zijn volgens bayes (zie jelle voor meer info)
+*/
+void Analyse::lbpOnProb(){
+	DIR *dir;
+	struct dirent *ent;
+
+	//const char* diropen = directory.c_str();
+	char* diropen = "C:\\Beeldverwerking\\beeldverwerking\\ProjectX\\ProjectX\\prob\\";
+	char* dirori = "C:\\Beeldverwerking\\data_road\\training\\image_2\\";
+	String directory = diropen;
+	if ((dir = opendir(diropen)) != NULL) {
+		/* print all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL) {
+			String name = ent->d_name;
+			if (name.find(".png") < name.length()){
+				//if (name != "uu_000067.png"){
+					printf("\t%s\n", ent->d_name);
+					String filename = directory + ent->d_name;
+					//cout << filename << endl;
+					cout << dirori + name << endl;
+					Mat image = imread(filename, IMREAD_COLOR); // Read the probability file
+					Mat lbp_image = imread(dirori + name,IMREAD_COLOR); // Read the original file
+					imshow("Original", lbp_image);
+					Analyse analyse;
+					const int PATCH_SIZE = 20, VECTOR_SIZE = 5, BIN_COUNT = 50;
+					vector<Point2i> patches;
+					analyse.findBlackPatches(image, PATCH_SIZE, VECTOR_SIZE, patches);
+					Mat textures;
+					analyse.compareHistograms(lbp_image, textures, patches, PATCH_SIZE, 0.2);
+					analyse.lbp(lbp_image, lbp_image, 2, 0.02);
+					imshow("LBP", lbp_image);
+					 // test
+					/*for each (Point2i patch in patches){
+						cout << patch << endl;
+						rectangle(image, patch, Point(patch.x + PATCH_SIZE, patch.y + PATCH_SIZE), Scalar(255, 255, 255));
+						vector<int> bins = devideInBins(lbp_image(Rect(patch.x, patch.y, PATCH_SIZE, PATCH_SIZE)), BIN_COUNT);
+						for (int i = 0; i < bins.size(); i++){
+							cout << i * 255 / BIN_COUNT << "-" << (i+1) * 255 / BIN_COUNT - 1 << ": " << bins[i] << endl;
+						}
+						cout << endl << endl;
+					}*/
+					vector<float> bins_patch = devideInBins(lbp_image(Rect(patches[0].x, patches[0].y, PATCH_SIZE, PATCH_SIZE)), BIN_COUNT);
+					vector<float> bins_random = devideInBins(lbp_image(Rect(0, 0, PATCH_SIZE, PATCH_SIZE)), BIN_COUNT);
+					double compval = compareHist(bins_patch, bins_random, CV_COMP_KL_DIV);
+					cout << "Comparation: " << compval << endl;
+					imshow("Patches", image);
+					imshow("CompareHist", textures);
+					waitKey(0);
+					analyse.processimage(image, name);
+				//}
+			}
+		}
+		closedir(dir);
+	}
+}
+
+void Analyse::compareHistograms(Mat src, Mat & dst, vector<Point2i> &patches, int patchsize, double comp_threshold){
+	Mat hsv_src;
+	Mat hsv_patch;
+	src.copyTo(dst);
+
+	cvtColor(src, hsv_src, CV_BGR2HSV);
+
+	Rect patch = Rect(patches[0].x, patches[0].y, patchsize, patchsize);
+
+	hsv_patch = hsv_src(patch);
+
+	int h_bins = 50; int s_bins = 60;
+	int histSize[] = { h_bins, s_bins };
+
+	float h_ranges[] = { 0, 180 };
+	float s_ranges[] = { 0, 256 };
+
+	const float* ranges[] = { h_ranges, s_ranges };
+
+	int channels[] = { 0, 1 };
+	int lighter = 130;
+
+	for (int i = 0; i < src.rows - patchsize; i += patchsize){
+		for (int j = 0; j < src.cols - patchsize; j += patchsize){
+
+			Mat hsv_test = hsv_src(Rect(j, i, patchsize, patchsize));
+
+			MatND hist_src;
+			MatND hist_test;
+
+			calcHist(&hsv_src, 1, channels, Mat(), hist_src, 2, histSize, ranges, true, false);
+			normalize(hist_src, hist_src, 0, 1, NORM_MINMAX, -1, Mat());
+
+			calcHist(&hsv_test, 1, channels, Mat(), hist_test, 2, histSize, ranges, true, false);
+			normalize(hist_test, hist_test, 0, 1, NORM_MINMAX, -1, Mat());
+
+			/*
+			Mogelijke compare methodes:
+			CV_COMP_CORREL
+			CV_COMP_CHISQR
+			CV_COMP_INTERSECT
+			CV_COMP_BHATTACHARYYA
+			CV_COMP_HELLINGER
+			*/
+			int compare_method = CV_COMP_CORREL; 
+			double comp_value = compareHist(hist_src, hist_test, compare_method);
+			if (comp_value < comp_threshold){
+				for (int r = 0; r < patchsize; r++){
+					for (int c = 0; c < patchsize; c++){
+
+						dst.at<uchar>(Point((j + c) * 3, i + r)) += ((dst.at<uchar>(Point((j + c) * 3, i + r)) < 255 - lighter) ? lighter : (255 - dst.at<uchar>(Point((j + c) * 3, i + r))));
+						dst.at<uchar>(Point((j + c) * 3 + 1, i + r)) += ((dst.at<uchar>(Point((j + c) * 3 + 1, i + r)) < 255 - lighter) ? lighter : (255 - dst.at<uchar>(Point((j + c) * 3 + 1, i + r))));
+						dst.at<uchar>(Point((j + c) * 3 + 2, i + r)) += ((dst.at<uchar>(Point((j + c) * 3 + 2, i + r)) < 255 - lighter) ? lighter : (255 - dst.at<uchar>(Point((j + c) * 3 + 2, i + r))));
+					}
+				}
+
+			}
+
+		}
+	}
+
+	rectangle(dst, patch, Scalar(255, 255, 255));
+
+}
+
+void Analyse::findBlackPatches(Mat & image, int patchsize, int vectorsize, vector<Point2i> &patches){
+	int x = image.cols;
+	int y = image.rows;
+	int offset = y / 5;
+	// search with decreasing offset
+	while (patches.size() < vectorsize && offset > 0){
+		// searching lower half of image for patches
+		while (patches.size() < vectorsize && x > image.cols / 2){
+			while (patches.size() < vectorsize && y > patchsize){
+				// checking current patch for being all black
+				bool allBlack = true;
+				int i = y - patchsize;
+				while (allBlack && i <= y){
+					int j = x - patchsize;
+					while (allBlack && j <= x){
+						allBlack = image.at<Vec3b>(i,j)[1] == 0;
+						j++;
+					}
+					i++;
+				}
+				// add topleft point to all-black-patch-list
+				if (allBlack)
+					patches.push_back(Point2i(x - patchsize, y - patchsize));
+				//--
+				y -= offset;
+			}
+			y = image.rows;
+			x -= offset;
+
+		}
+		offset /= 2;
+		x = image.cols;
+		y = image.rows;
+	}
+}
+
 
 /*
 voert alle methodes uit op de foto's
@@ -938,9 +1261,14 @@ void Analyse::processimage(Mat& image,string name){
 	//cout << "watershed " << chr.tijd() << endl;
 
 	//chr.start();
-	analyse.findColor(image,Mat());
+	//analyse.findColor(image,Mat());
 	//chr.stop();
-	//cout << "watershed " << chr.tijd() << endl;
+	//cout << "color " << chr.tijd() << endl;
+
+	//chr.start();
+	analyse.findTextures(image);
+	//chr.stop();
+	//cout << "texture " << chr.tijd() << endl;
 
 	analyse.printResult(image);
 	//if (result.dims != 0){

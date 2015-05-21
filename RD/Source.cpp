@@ -6,7 +6,7 @@
 #include "linefinder.h"
 #include "Analyse.h"
 
-using namespace cv;
+//using namespace cv;
 using namespace std;
 
 
@@ -30,7 +30,11 @@ int main(int argc, char** argv)
 	cv::String directory = "C:\\Beeldverwerking\\data_road\\training\\image_2\\";
 	cv::String bev_directory = "C:\\Beeldverwerking\\data_road\\training\\image_bev\\";
 
-	analyse.readallpics(directory);
+	//analyse.readallpics(directory);
+	analyse.lbpOnProb();
+
+	cout << "Press a key to exit...";
+	cin.get();
 
 	return 0;
 }
