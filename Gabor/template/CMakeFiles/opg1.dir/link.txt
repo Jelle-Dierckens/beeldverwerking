@@ -1,0 +1,1 @@
+/usr/bin/c++   -o3 -w -std=c++11 -O3 -DNDEBUG -pg   CMakeFiles/opg1.dir/src/main.o  -o bin/opg1  -L/usr/local/lib -rdynamic -lopencv_core -lopencv_highgui -Wl,-rpath,/usr/local/lib 
