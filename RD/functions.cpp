@@ -937,7 +937,7 @@ bool Analyse::isWhite(const Mat &mask, int x, int y, int dx, int dy, double thre
 	return (white >= (white+black)*threshold);
 }
 
-void Analyse::lbp(const Mat & image, Mat & dst, double threshold_fraction){
+void Analyse::lbp(const Mat & image, Mat & dst, int radius, double threshold_fraction){
 	Mat grey;
 	cvtColor(image, grey, COLOR_RGB2GRAY);
 	grey.copyTo(dst);
@@ -945,18 +945,18 @@ void Analyse::lbp(const Mat & image, Mat & dst, double threshold_fraction){
 	minMaxLoc(grey, &minValue, &maxValue);
 	uchar thres = threshold_fraction * (maxValue-minValue);
 	//dst = Mat::zeros(image.rows - 2, image.cols - 2, image.depth());
-	for (int i = 1; i < grey.rows - 1; i++){
-		for (int j = 1; j < grey.cols - 1; j++){
+	for (int i = radius; i < grey.rows - radius; i++){
+		for (int j = radius; j < grey.cols - radius; j++){
 			uchar center = grey.at<uchar>(i, j);
 			uchar points[8];
-			points[0] = grey.at<uchar>(i - 1, j - 1) >= center + thres ? 1 : 0;
-			points[1] = grey.at<uchar>(i - 1, j) >= center + thres ? 1 : 0;
-			points[2] = grey.at<uchar>(i - 1, j + 1) >= center + thres ? 1 : 0;
-			points[3] = grey.at<uchar>(i, j - 1) >= center + thres ? 1 : 0;
-			points[4] = grey.at<uchar>(i, j + 1) >= center + thres ? 1 : 0;
-			points[5] = grey.at<uchar>(i + 1, j - 1) >= center + thres ? 1 : 0;
-			points[6] = grey.at<uchar>(i + 1, j) >= center + thres ? 1 : 0;
-			points[7] = grey.at<uchar>(i + 1, j + 1) >= center + thres ? 1 : 0;
+			points[0] = grey.at<uchar>(i - radius, j - radius) >= center + thres ? 1 : 0;
+			points[1] = grey.at<uchar>(i - radius, j) >= center + thres ? 1 : 0;
+			points[2] = grey.at<uchar>(i - radius, j + radius) >= center + thres ? 1 : 0;
+			points[3] = grey.at<uchar>(i, j - radius) >= center + thres ? 1 : 0;
+			points[4] = grey.at<uchar>(i, j + radius) >= center + thres ? 1 : 0;
+			points[5] = grey.at<uchar>(i + radius, j - radius) >= center + thres ? 1 : 0;
+			points[6] = grey.at<uchar>(i + radius, j) >= center + thres ? 1 : 0;
+			points[7] = grey.at<uchar>(i + radius, j + radius) >= center + thres ? 1 : 0;
 			uchar mult[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
 			center = 0;
 			for (int k = 0; k < 8; k++){
@@ -965,6 +965,18 @@ void Analyse::lbp(const Mat & image, Mat & dst, double threshold_fraction){
 			dst.at<uchar>(i, j) = center;
 		}
 	}
+}
+
+vector<float> Analyse::devideInBins(Mat patch, int bincount){
+	vector<float> bins;
+	bins.resize(bincount, 0);
+	int binwidth = 255 / bincount;
+	for (int r = 0; r < patch.rows; r++){
+		for (int c = 0; c < patch.cols; c++){
+			bins[(patch.at<uchar>(r, c)*bincount / 255)%bincount]++;
+		}
+	}
+	return bins;
 }
 
 void Analyse::findTextures(Mat &image){
@@ -1080,24 +1092,101 @@ void Analyse::lbpOnProb(){
 					Mat lbp_image = imread(dirori + name,IMREAD_COLOR); // Read the original file
 					imshow("Original", lbp_image);
 					Analyse analyse;
-					const int PATCH_SIZE = 20, VECTOR_SIZE = 5;
+					const int PATCH_SIZE = 20, VECTOR_SIZE = 5, BIN_COUNT = 50;
 					vector<Point2i> patches;
 					analyse.findBlackPatches(image, PATCH_SIZE, VECTOR_SIZE, patches);
+					Mat textures;
+					analyse.compareHistograms(lbp_image, textures, patches, PATCH_SIZE, 0.2);
+					analyse.lbp(lbp_image, lbp_image, 2, 0.02);
+					imshow("LBP", lbp_image);
 					 // test
-					for each (Point2i patch in patches){
+					/*for each (Point2i patch in patches){
 						cout << patch << endl;
 						rectangle(image, patch, Point(patch.x + PATCH_SIZE, patch.y + PATCH_SIZE), Scalar(255, 255, 255));
-					}
-					analyse.lbp(lbp_image, lbp_image, 0.04);
-					imshow("LBP", lbp_image);
+						vector<int> bins = devideInBins(lbp_image(Rect(patch.x, patch.y, PATCH_SIZE, PATCH_SIZE)), BIN_COUNT);
+						for (int i = 0; i < bins.size(); i++){
+							cout << i * 255 / BIN_COUNT << "-" << (i+1) * 255 / BIN_COUNT - 1 << ": " << bins[i] << endl;
+						}
+						cout << endl << endl;
+					}*/
+					vector<float> bins_patch = devideInBins(lbp_image(Rect(patches[0].x, patches[0].y, PATCH_SIZE, PATCH_SIZE)), BIN_COUNT);
+					vector<float> bins_random = devideInBins(lbp_image(Rect(0, 0, PATCH_SIZE, PATCH_SIZE)), BIN_COUNT);
+					double compval = compareHist(bins_patch, bins_random, CV_COMP_KL_DIV);
+					cout << "Comparation: " << compval << endl;
 					imshow("Patches", image);
+					imshow("CompareHist", textures);
 					waitKey(0);
-					//analyse.processimage(image, name);
+					analyse.processimage(image, name);
 				//}
 			}
 		}
 		closedir(dir);
 	}
+}
+
+void Analyse::compareHistograms(Mat src, Mat & dst, vector<Point2i> &patches, int patchsize, double comp_threshold){
+	Mat hsv_src;
+	Mat hsv_patch;
+	src.copyTo(dst);
+
+	cvtColor(src, hsv_src, CV_BGR2HSV);
+
+	Rect patch = Rect(patches[0].x, patches[0].y, patchsize, patchsize);
+
+	hsv_patch = hsv_src(patch);
+
+	int h_bins = 50; int s_bins = 60;
+	int histSize[] = { h_bins, s_bins };
+
+	float h_ranges[] = { 0, 180 };
+	float s_ranges[] = { 0, 256 };
+
+	const float* ranges[] = { h_ranges, s_ranges };
+
+	int channels[] = { 0, 1 };
+	int lighter = 130;
+
+	for (int i = 0; i < src.rows - patchsize; i += patchsize){
+		for (int j = 0; j < src.cols - patchsize; j += patchsize){
+
+			Mat hsv_test = hsv_src(Rect(j, i, patchsize, patchsize));
+
+			MatND hist_src;
+			MatND hist_test;
+
+			calcHist(&hsv_src, 1, channels, Mat(), hist_src, 2, histSize, ranges, true, false);
+			normalize(hist_src, hist_src, 0, 1, NORM_MINMAX, -1, Mat());
+
+			calcHist(&hsv_test, 1, channels, Mat(), hist_test, 2, histSize, ranges, true, false);
+			normalize(hist_test, hist_test, 0, 1, NORM_MINMAX, -1, Mat());
+
+			/*
+			Mogelijke compare methodes:
+			CV_COMP_CORREL
+			CV_COMP_CHISQR
+			CV_COMP_INTERSECT
+			CV_COMP_BHATTACHARYYA
+			CV_COMP_HELLINGER
+			*/
+			int compare_method = CV_COMP_CORREL; 
+			double comp_value = compareHist(hist_src, hist_test, compare_method);
+			if (comp_value < comp_threshold){
+				for (int r = 0; r < patchsize; r++){
+					for (int c = 0; c < patchsize; c++){
+
+						dst.at<uchar>(Point((j + c) * 3, i + r)) += ((dst.at<uchar>(Point((j + c) * 3, i + r)) < 255 - lighter) ? lighter : (255 - dst.at<uchar>(Point((j + c) * 3, i + r))));
+						dst.at<uchar>(Point((j + c) * 3 + 1, i + r)) += ((dst.at<uchar>(Point((j + c) * 3 + 1, i + r)) < 255 - lighter) ? lighter : (255 - dst.at<uchar>(Point((j + c) * 3 + 1, i + r))));
+						dst.at<uchar>(Point((j + c) * 3 + 2, i + r)) += ((dst.at<uchar>(Point((j + c) * 3 + 2, i + r)) < 255 - lighter) ? lighter : (255 - dst.at<uchar>(Point((j + c) * 3 + 2, i + r))));
+					}
+				}
+
+			}
+
+		}
+	}
+
+	rectangle(dst, patch, Scalar(255, 255, 255));
+
 }
 
 void Analyse::findBlackPatches(Mat & image, int patchsize, int vectorsize, vector<Point2i> &patches){
