@@ -1,0 +1,1 @@
+/usr/bin/c++   -o3 -w -std=c++11 -g -pg   CMakeFiles/roc_curves.dir/src/main.cpp.o CMakeFiles/roc_curves.dir/src/roc_analizer.cpp.o CMakeFiles/roc_curves.dir/src/dummyFeature.cpp.o  -o bin/roc_curves  -L/usr/local/lib -rdynamic -lopencv_core -lopencv_highgui -lopencv_imgcodecs -lopencv_imgproc -Wl,-rpath,/usr/local/lib 
