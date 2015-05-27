@@ -102,8 +102,12 @@ void flood(Mat &image_bgr, Mat &image_hls, Mat &image_output, int startr, int st
         result=comp_histogram(prev_hist, current_hist, abs_treshold, rel_treshold);
 
         std::cout<<"r: "<<r<<" c: "<<c<<" step: "<<step_size<<"\toutputImage: "<<image_output.rows<<", "<<image_output.cols<<"\nresult: "<<result<<"\n";
-        image_output.at<float>(r,c)=result;
-
+        //image_output.at<float>(r,c)=result;
+        for (int i=-step_size/2; i<step_size/2; i++) {
+            for (int j=-step_size/2; j<step_size/2; j++) {
+                image_output.at<float>(r+i, c+j)=result;
+            }
+        }
         std::cout<<"------------------------------------------------------------------------------------------------------\n";
         if(result>=vote_treshold) {
             if(r+step_size<image_output.rows && image_output.at<float>(r+step_size,c)<0) {
