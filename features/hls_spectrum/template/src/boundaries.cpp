@@ -78,6 +78,7 @@ void flood(Mat &image_bgr, Mat &image_hls, Mat &image_output, int startr, int st
     std::pair<int, int> temp_pair;
     std::vector<float> prev_hist;
     std::vector<float> current_hist;
+    std::vector<float> original_hist;
     int r,c;
     //<int size=40, step_size=25;//40, 25
     float abs_treshold=0.08;//0.1
@@ -92,6 +93,7 @@ void flood(Mat &image_bgr, Mat &image_hls, Mat &image_output, int startr, int st
     imshow("test", image_output);
     waitKey();*/
     calc_histogram(image_hls, image_bgr, startr, startc, size, prev_hist);
+    original_hist=prev_hist;
     while (!process_queue.empty()) {
         temp_pair=process_queue.front();
         process_queue.pop();
@@ -99,8 +101,8 @@ void flood(Mat &image_bgr, Mat &image_hls, Mat &image_output, int startr, int st
         c=temp_pair.second;
         //std::cout<<"testing at "<<r<<", "<<c<<"\n";
         calc_histogram(image_hls, image_bgr, r, c, size, current_hist);
-        result=comp_histogram(prev_hist, current_hist, abs_treshold, rel_treshold);
-
+        result=max(comp_histogram(prev_hist, current_hist, abs_treshold/2.0, rel_treshold/2.0),comp_histogram(original_hist, current_hist, abs_treshold, rel_treshold));
+        prev_hist=current_hist;
         //std::cout<<"r: "<<r<<" c: "<<c<<" step: "<<step_size<<"\toutputImage: "<<image_output.rows<<", "<<image_output.cols<<"\nresult: "<<result<<"\n";
         //image_output.at<float>(r,c)=result;
         for (int i=-(step_size+1)/2; i<step_size/2; i++) {
@@ -110,17 +112,7 @@ void flood(Mat &image_bgr, Mat &image_hls, Mat &image_output, int startr, int st
         }
         //std::cout<<"------------------------------------------------------------------------------------------------------\n";
         if(result>=vote_treshold) {
-            if(r+step_size<image_output.rows && image_output.at<float>(r+step_size,c)<0) {
-                //std::cout<<"pushing "<<r+step_size<<", "<<c<<"down\n";
-                process_queue.push(std::make_pair(r+step_size, c));
-                image_output.at<float>(r+step_size,c)=0;
-            }
-            std::cout<<image_output.at<float>(r-step_size,c)<<"\n";
-            if(r-step_size>0 && image_output.at<float>(r-step_size,c)<0) {
-                //std::cout<<"pushing "<<r-step_size<<", "<<c<<"up\n";
-                process_queue.push(std::make_pair(r-step_size, c));
-                image_output.at<float>(r-step_size,c)=0;
-            }
+
             if(c+step_size<image_output.cols && image_output.at<float>(r,c+step_size)<0) {
                 //std::cout<<"pushing "<<r<<", "<<c+step_size<<"right\n";
                 process_queue.push(std::make_pair(r, c+step_size));
@@ -130,6 +122,19 @@ void flood(Mat &image_bgr, Mat &image_hls, Mat &image_output, int startr, int st
                 //std::cout<<"pushing "<<r<<", "<<c-step_size<<"left\n";
                 process_queue.push(std::make_pair(r, c-step_size));
                 image_output.at<float>(r,c-step_size)=0;
+            }
+            if(r+step_size<image_output.rows && image_output.at<float>(r+step_size,c)<0) {
+                //std::cout<<"pushing "<<r+step_size<<", "<<c<<"down\n";
+                process_queue.push(std::make_pair(r+step_size, c));
+                image_output.at<float>(r+step_size,c)=0;
+            }
+            std::cout<<image_output.at<float>(r-step_size,c)<<"\n";
+            if(r-step_size>0 && image_output.at<float>(r-step_size,c)<0) {
+                //std::cout<<"pushing "<<r-step_size<<", "<<c<<"up\n";
+                process_queue.push(std::make_pair(r-step_size, c));
+                //step_size*=0.95;
+                //size*=0.95;
+                image_output.at<float>(r-step_size,c)=0;
             }
         }
     }
@@ -214,7 +219,7 @@ int main(int argc, char **argv){
         image_bgr.copyTo(double_output);
         Mat output;
         multi_flooding(image_bgr, image, gem, output, original.rows-10, original.cols/2-10, 11,7);
-        Mat kernel = getStructuringElement(MORPH_ELLIPSE,Size(15,15));
+       Mat kernel = getStructuringElement(MORPH_ELLIPSE,Size(20,20));
         for (int i=0; i<5; i++) {
             morphologyEx(output, output, MORPH_OPEN,kernel);
         }
@@ -222,7 +227,7 @@ int main(int argc, char **argv){
         cvtColor(double_output,double_output, COLOR_BGR2HSV);
         for(int i=0; i<double_output.rows; i++) {
             for(int j=0; j<double_output.cols; j++) {
-                double_output.at<Vec3b>(i,j)[1]=output.at<float>(i,j)*255;
+                double_output.at<Vec3b>(i,j)[1]=output.at<float>(i,j)>0?255:0;
             }
         }
         cvtColor(double_output, double_output, COLOR_HSV2BGR);
