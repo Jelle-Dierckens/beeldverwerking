@@ -226,7 +226,7 @@ void create_voteraster(Mat &src, Mat &raster, int kSize) {
                 calc_lbp(patch,dest ,4,0.04);
                 calcHist(&patch, 1, channels, Mat(), hist_test, 2, histSize, ranges, true, false);
                 normalize(hist_test, hist_test, 0, 1, NORM_MINMAX, -1, Mat());
-                std::cout<<hist_test<<"\n";
+                //std::cout<<hist_test<<"\n";
 
                 /*
                     Mogelijke compare methodes:
@@ -306,35 +306,34 @@ int main(int argc, char **argv){
                    b=256;
                 }*/
                 b=1-hls_bayes.at<float>(h/2.56, l/2.56, s/2.56);
-                if(a<0.5 && b<0.8) {
+                if(b<0.8) {
                     image.at<Vec3b>(i,j)[1]=0;
                 }
-                else if(a>=0.5 && b>=0.8) {
+                else if(b>=0.8) {
                     image.at<Vec3b>(i,j)[1]=255;
                 }
                 else {
                     image.at<Vec3b>(i,j)[1]=125;
                 }
 
-                //image.at<Vec3b>(i,j)[1]=256*((a*b)/(a+b));
             }
         }
         namedWindow("result");
         namedWindow("original");
-        namedWindow("raster");
-        namedWindow("lbp");
-        Mat raster;
-        int kSize=50;
-        create_voteraster(image, raster, kSize);
-        resize(raster, raster, Size(image.cols, image.rows),0,0, INTER_NEAREST);
+        //namedWindow("raster");
+        //namedWindow("lbp");
+        //Mat raster;
+        //int kSize=10;
+        //create_voteraster(image, raster, kSize);
+        //resize(raster, raster, Size(image.cols, image.rows),0,0, INTER_NEAREST);
         cvtColor(image, image, COLOR_HLS2BGR);
-        Mat lbp;
-        calc_lbp(image, lbp, 4,0.04);
+        //Mat lbp;
+        //calc_lbp(image, lbp, 4,0.04);
         //GaussianBlur(image, image, Size(5,5), 7);
         imshow("result", image);
         imshow("original", original);
-        imshow("raster", raster);
-        imshow("lbp", lbp);
+        //imshow("raster", raster);
+        //imshow("lbp", lbp);
         waitKey(0);
     }
     return 0;

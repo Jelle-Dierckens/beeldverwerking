@@ -49,37 +49,37 @@ include CMakeFiles/main.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/main.dir/flags.make
 
-CMakeFiles/main.dir/src/test.o: CMakeFiles/main.dir/flags.make
-CMakeFiles/main.dir/src/test.o: /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/test.cpp
+CMakeFiles/main.dir/src/boundaries.o: CMakeFiles/main.dir/flags.make
+CMakeFiles/main.dir/src/boundaries.o: /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/boundaries.cpp
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template-build/CMakeFiles $(CMAKE_PROGRESS_1)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/main.dir/src/test.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/test.o -c /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/main.dir/src/boundaries.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/main.dir/src/boundaries.o -c /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/boundaries.cpp
 
-CMakeFiles/main.dir/src/test.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/test.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/test.cpp > CMakeFiles/main.dir/src/test.i
+CMakeFiles/main.dir/src/boundaries.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/src/boundaries.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/boundaries.cpp > CMakeFiles/main.dir/src/boundaries.i
 
-CMakeFiles/main.dir/src/test.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/test.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/test.cpp -o CMakeFiles/main.dir/src/test.s
+CMakeFiles/main.dir/src/boundaries.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/src/boundaries.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/boundaries.cpp -o CMakeFiles/main.dir/src/boundaries.s
 
-CMakeFiles/main.dir/src/test.o.requires:
-.PHONY : CMakeFiles/main.dir/src/test.o.requires
+CMakeFiles/main.dir/src/boundaries.o.requires:
+.PHONY : CMakeFiles/main.dir/src/boundaries.o.requires
 
-CMakeFiles/main.dir/src/test.o.provides: CMakeFiles/main.dir/src/test.o.requires
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/test.o.provides.build
-.PHONY : CMakeFiles/main.dir/src/test.o.provides
+CMakeFiles/main.dir/src/boundaries.o.provides: CMakeFiles/main.dir/src/boundaries.o.requires
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/boundaries.o.provides.build
+.PHONY : CMakeFiles/main.dir/src/boundaries.o.provides
 
-CMakeFiles/main.dir/src/test.o.provides.build: CMakeFiles/main.dir/src/test.o
+CMakeFiles/main.dir/src/boundaries.o.provides.build: CMakeFiles/main.dir/src/boundaries.o
 
 # Object files for target main
 main_OBJECTS = \
-"CMakeFiles/main.dir/src/test.o"
+"CMakeFiles/main.dir/src/boundaries.o"
 
 # External object files for target main
 main_EXTERNAL_OBJECTS =
 
-/home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/bin/main: CMakeFiles/main.dir/src/test.o
+/home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/bin/main: CMakeFiles/main.dir/src/boundaries.o
 /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/bin/main: CMakeFiles/main.dir/build.make
 /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/bin/main: CMakeFiles/main.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/bin/main"
@@ -89,7 +89,7 @@ main_EXTERNAL_OBJECTS =
 CMakeFiles/main.dir/build: /home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/bin/main
 .PHONY : CMakeFiles/main.dir/build
 
-CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/test.o.requires
+CMakeFiles/main.dir/requires: CMakeFiles/main.dir/src/boundaries.o.requires
 .PHONY : CMakeFiles/main.dir/requires
 
 CMakeFiles/main.dir/clean:

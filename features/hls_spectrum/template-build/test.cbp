@@ -84,7 +84,7 @@
          </MakeCommands>
       </Target>
       </Build>
-      <Unit filename="/home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/test.cpp">
+      <Unit filename="/home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/boundaries.cpp">
       </Unit>
       <Unit filename="/home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/CMakeLists.txt">
           <Option virtualFolder="CMake Files\" />

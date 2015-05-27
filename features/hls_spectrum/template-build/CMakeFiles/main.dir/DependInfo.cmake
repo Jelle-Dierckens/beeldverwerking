@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/test.cpp" "/home/jelle/school/beeldverwerking/project/features/hls_spectrum/template-build/CMakeFiles/main.dir/src/test.o"
+  "/home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/src/boundaries.cpp" "/home/jelle/school/beeldverwerking/project/features/hls_spectrum/template-build/CMakeFiles/main.dir/src/boundaries.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

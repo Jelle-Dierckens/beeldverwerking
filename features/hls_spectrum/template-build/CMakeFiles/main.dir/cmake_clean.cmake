@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/main.dir/src/test.o"
+  "CMakeFiles/main.dir/src/boundaries.o"
   "/home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/bin/main.pdb"
   "/home/jelle/school/beeldverwerking/project/features/hls_spectrum/template/bin/main"
 )

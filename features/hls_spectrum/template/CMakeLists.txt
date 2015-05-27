@@ -20,7 +20,10 @@ SET(OpenCV_LIBRARIES opencv_core opencv_highgui opencv_imgcodecs opencv_imgproc)
 #ADD_EXECUTABLE(Bayes src/Bayes.cpp)
 #TARGET_LINK_LIBRARIES(Bayes ${OpenCV_LIBRARIES})
 
-ADD_EXECUTABLE(main src/test.cpp)
+#ADD_EXECUTABLE(main src/test.cpp)
+#TARGET_LINK_LIBRARIES(main ${OpenCV_LIBRARIES})
+
+ADD_EXECUTABLE(main src/boundaries.cpp)
 TARGET_LINK_LIBRARIES(main ${OpenCV_LIBRARIES})
 
 

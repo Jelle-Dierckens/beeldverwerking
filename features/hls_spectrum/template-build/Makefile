@@ -115,19 +115,19 @@ main/fast:
 .PHONY : main/fast
 
 # target to build an object file
-src/test.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/test.o
-.PHONY : src/test.o
+src/boundaries.o:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/boundaries.o
+.PHONY : src/boundaries.o
 
 # target to preprocess a source file
-src/test.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/test.i
-.PHONY : src/test.i
+src/boundaries.i:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/boundaries.i
+.PHONY : src/boundaries.i
 
 # target to generate assembly for a file
-src/test.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/test.s
-.PHONY : src/test.s
+src/boundaries.s:
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/boundaries.s
+.PHONY : src/boundaries.s
 
 # Help Target
 help:
@@ -138,9 +138,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... main"
-	@echo "... src/test.o"
-	@echo "... src/test.i"
-	@echo "... src/test.s"
+	@echo "... src/boundaries.o"
+	@echo "... src/boundaries.i"
+	@echo "... src/boundaries.s"
 .PHONY : help
 
 
