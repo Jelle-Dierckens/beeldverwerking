@@ -53,7 +53,7 @@ float comp_histogram(std::vector<float> &histogram_1, std::vector<float> &histog
     int vote=0;
     //speciale gevallen: veel blauw: schaduw, dus toelaten
     //                                veel geen baan: niet toelaten
-    if(histogram_2[3]>0.6 || histogram_1[3]>0.6) {
+    if(histogram_2[3]>0.8 || histogram_1[3]>0.8) {
         return 0;
     }
     if(histogram_2[2]>0.9 || histogram_1[2]>0.9) {
@@ -71,7 +71,7 @@ float comp_histogram(std::vector<float> &histogram_1, std::vector<float> &histog
 
 void flood(Mat &image_bgr, Mat &image_hls, Mat &image_output, int startr, int startc, int size=40, int step_size=25) {
     std::cout<<"start flooding\n";
-   /* image_output=Mat::ones(image_bgr.size(), CV_32F);
+    /* image_output=Mat::ones(image_bgr.size(), CV_32F);
     image_output*=-1.0;*/
     std::queue<std::pair<int, int> > process_queue;
     process_queue.push(std::make_pair(startr, startc));
@@ -80,10 +80,10 @@ void flood(Mat &image_bgr, Mat &image_hls, Mat &image_output, int startr, int st
     std::vector<float> current_hist;
     int r,c;
     //<int size=40, step_size=25;//40, 25
-    float abs_treshold=0.1;//0.1
-    float rel_treshold=0.05;//0.05
+    float abs_treshold=0.08;//0.1
+    float rel_treshold=0.08;//0.05
     float result;
-    float vote_treshold=0.6;//0.6
+    float vote_treshold=0.55;//0.6
     /*for (int i = -10; i < 10; ++i) {
         for (int j = -10; j < 10; ++j) {
             image_output.at<float>(startr+i,startc+j)=1.0;
@@ -97,43 +97,43 @@ void flood(Mat &image_bgr, Mat &image_hls, Mat &image_output, int startr, int st
         process_queue.pop();
         r=temp_pair.first;
         c=temp_pair.second;
-        std::cout<<"testing at "<<r<<", "<<c<<"\n";
+        //std::cout<<"testing at "<<r<<", "<<c<<"\n";
         calc_histogram(image_hls, image_bgr, r, c, size, current_hist);
         result=comp_histogram(prev_hist, current_hist, abs_treshold, rel_treshold);
 
-        std::cout<<"r: "<<r<<" c: "<<c<<" step: "<<step_size<<"\toutputImage: "<<image_output.rows<<", "<<image_output.cols<<"\nresult: "<<result<<"\n";
+        //std::cout<<"r: "<<r<<" c: "<<c<<" step: "<<step_size<<"\toutputImage: "<<image_output.rows<<", "<<image_output.cols<<"\nresult: "<<result<<"\n";
         //image_output.at<float>(r,c)=result;
-        for (int i=-step_size/2; i<step_size/2; i++) {
-            for (int j=-step_size/2; j<step_size/2; j++) {
+        for (int i=-(step_size+1)/2; i<step_size/2; i++) {
+            for (int j=-(step_size+1)/2; j<step_size/2; j++) {
                 image_output.at<float>(r+i, c+j)=result;
             }
         }
-        std::cout<<"------------------------------------------------------------------------------------------------------\n";
+        //std::cout<<"------------------------------------------------------------------------------------------------------\n";
         if(result>=vote_treshold) {
             if(r+step_size<image_output.rows && image_output.at<float>(r+step_size,c)<0) {
-                std::cout<<"pushing "<<r+step_size<<", "<<c<<"down\n";
+                //std::cout<<"pushing "<<r+step_size<<", "<<c<<"down\n";
                 process_queue.push(std::make_pair(r+step_size, c));
                 image_output.at<float>(r+step_size,c)=0;
             }
-           std::cout<<image_output.at<float>(r-step_size,c)<<"\n";
-           if(r-step_size>0 && image_output.at<float>(r-step_size,c)<0) {
-                std::cout<<"pushing "<<r-step_size<<", "<<c<<"up\n";
+            std::cout<<image_output.at<float>(r-step_size,c)<<"\n";
+            if(r-step_size>0 && image_output.at<float>(r-step_size,c)<0) {
+                //std::cout<<"pushing "<<r-step_size<<", "<<c<<"up\n";
                 process_queue.push(std::make_pair(r-step_size, c));
                 image_output.at<float>(r-step_size,c)=0;
             }
             if(c+step_size<image_output.cols && image_output.at<float>(r,c+step_size)<0) {
-                std::cout<<"pushing "<<r<<", "<<c+step_size<<"right\n";
+                //std::cout<<"pushing "<<r<<", "<<c+step_size<<"right\n";
                 process_queue.push(std::make_pair(r, c+step_size));
                 image_output.at<float>(r,c+step_size)=0;
             }
             if(c-step_size>0 && image_output.at<float>(r, c-step_size)<0) {
-                std::cout<<"pushing "<<r<<", "<<c-step_size<<"left\n";
+                //std::cout<<"pushing "<<r<<", "<<c-step_size<<"left\n";
                 process_queue.push(std::make_pair(r, c-step_size));
                 image_output.at<float>(r,c-step_size)=0;
             }
         }
     }
-    std::cout<<"finished flooding!\n";
+    //std::cout<<"finished flooding!\n";
 }
 
 void multi_flooding(Mat &image_bgr, Mat &image_hls, Mat &image_average, Mat &image_output, int startr, int startc, int size=40, int step_size=25) {
@@ -148,6 +148,7 @@ void multi_flooding(Mat &image_bgr, Mat &image_hls, Mat &image_average, Mat &ima
     }
     //flood(image_bgr, image_hls, image_output, startr, startc);
 }
+
 
 int main(int argc, char **argv){
     if(argc<3) {
@@ -181,7 +182,7 @@ int main(int argc, char **argv){
         Mat image_bgr=imread(argv[arg]);
         Mat original=image_bgr.clone();
         resize(gem, gem, Size(image_bgr.cols, image_bgr.rows));
-        GaussianBlur(image_bgr,image_bgr, Size(5,5),0);
+        //GaussianBlur(image_bgr,image_bgr, Size(3,3),0);
         Mat image;
         cvtColor(image_bgr, image, COLOR_BGR2HLS);
         int h,l,s;
@@ -193,10 +194,10 @@ int main(int argc, char **argv){
                 float b;
                 b=1-hls_bayes.at<float>(h/2.56, l/2.56, s/2.56);
                 image.at<Vec3b>(i,j)[2]=255;
-                if(b<0.8) {
+                if(b<0.75) {
                     image.at<Vec3b>(i,j)[1]=125;
                 }
-                else if(b>=0.8) {
+                else if(b>=0.75) {
                     image.at<Vec3b>(i,j)[1]=0;
                 }
                 else {
@@ -209,12 +210,25 @@ int main(int argc, char **argv){
         namedWindow("original");
         namedWindow("flood");
         cvtColor(image, image, COLOR_HLS2BGR);
+        Mat double_output;
+        image_bgr.copyTo(double_output);
         Mat output;
-        circle(original, Point(original.rows-10, original.cols/2-10),20, Scalar(0,255,0),3);
-        multi_flooding(image_bgr, image, gem, output, original.rows-10, original.cols/2-10);
+        multi_flooding(image_bgr, image, gem, output, original.rows-10, original.cols/2-10, 11,7);
+        Mat kernel = getStructuringElement(MORPH_ELLIPSE,Size(15,15));
+        for (int i=0; i<5; i++) {
+            morphologyEx(output, output, MORPH_OPEN,kernel);
+        }
+
+        cvtColor(double_output,double_output, COLOR_BGR2HSV);
+        for(int i=0; i<double_output.rows; i++) {
+            for(int j=0; j<double_output.cols; j++) {
+                double_output.at<Vec3b>(i,j)[1]=output.at<float>(i,j)*255;
+            }
+        }
+        cvtColor(double_output, double_output, COLOR_HSV2BGR);
         imshow("result", image);
         imshow("original", original);
-        imshow("flood", output);
+        imshow("flood", double_output);
         waitKey(0);
     }
     return 0;
